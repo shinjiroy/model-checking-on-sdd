@@ -16,7 +16,7 @@ This command uses Alloy Analyzer in CLI mode via Docker. This provides:
 - Alloy Model: `specs/{FEATURE_NAME}/formal/{feature}.als`
 - Properties List: `specs/{FEATURE_NAME}/formal/properties.md`
 - Previous Log: `specs/{FEATURE_NAME}/formal/verification-log.md` (if exists)
-- Verification Script: `verify.sh` (project root)
+- Verification Script: `.specify/scripts/bash/verify.sh`
 
 ## Verification Workflow
 
@@ -28,8 +28,8 @@ Verify that required files exist:
 Required files:
 ✓ specs/{FEATURE_NAME}/formal/{feature}.als
 ✓ specs/{FEATURE_NAME}/formal/properties.md
-✓ verify.sh (Docker verification script)
-✓ docker-compose.yml
+✓ .specify/scripts/bash/verify.sh (Docker verification script)
+✓ docker-compose.yaml
 ```
 
 If missing model, inform user:
@@ -43,7 +43,7 @@ If missing Docker setup:
 
 ```
 Error: Docker verification setup not found.
-Please ensure verify.sh and docker-compose.yml are in project root.
+Please ensure .specify/scripts/bash/verify.sh and docker-compose.yaml exist.
 ```
 
 ### Step 2: Execute Verification via Docker CLI
@@ -56,14 +56,14 @@ Instruct user to run verification using Docker:
 **プロジェクトルートで以下のコマンドを実行してください:**
 
 ```bash
-./verify.sh specs/{FEATURE_NAME}/formal/{feature}.als
+.specify/scripts/bash/verify.sh specs/{FEATURE_NAME}/formal/{feature}.als
 ```
 
 **オプション:**
 
-- スコープを変更: `./verify.sh ... --scope 7`
-- タイムアウト変更: `./verify.sh ... --timeout 600`
-- イメージ再ビルド: `./verify.sh ... --build`
+- スコープを変更: `.specify/scripts/bash/verify.sh ... --scope 7`
+- タイムアウト変更: `.specify/scripts/bash/verify.sh ... --timeout 600`
+- イメージ再ビルド: `.specify/scripts/bash/verify.sh ... --build`
 
 **検証が完了すると、以下のような出力が表示されます:**
 
@@ -273,7 +273,7 @@ Provide a clear summary:
 **Immediate actions**:
 1. Review counterexample for InventoryConsistency
 2. Choose a fix strategy (model update or spec clarification)
-3. Re-run verification after fixes: `./verify.sh specs/{FEATURE_NAME}/formal/{feature}.als`
+3. Re-run verification after fixes: `.specify/scripts/bash/verify.sh specs/{FEATURE_NAME}/formal/{feature}.als`
 
 **Documentation updated**:
 - ✓ `formal/properties.md` - Status updated with verification results
@@ -326,12 +326,12 @@ I've provided suggested fixes above. Let's address these before implementation.
 The Docker verification encountered an error. Common issues:
 
 1. **Docker not running**: Start Docker Desktop or Docker daemon
-2. **Image not built**: Run `./verify.sh --build` first
+2. **Image not built**: Run `.specify/scripts/bash/verify.sh --build` first
 3. **File path issue**: Ensure path is relative to project root
 4. **Alloy syntax error**: Check the .als file for syntax errors
 
 Try running with debug:
-./verify.sh specs/{FEATURE_NAME}/formal/{feature}.als --build
+.specify/scripts/bash/verify.sh specs/{FEATURE_NAME}/formal/{feature}.als --build
 
 If error persists, please share the complete error message.
 ```
@@ -350,21 +350,21 @@ If error persists, please share the complete error message.
 This command fits into the workflow as:
 
 ```
-/speckit.specify   → Create natural language spec
-/speckit.plan      → Create technical plan
-/speckit.formalize → Generate Alloy model
-./verify.sh ...    → Verify formal properties (Docker CLI)
-/speckit.verify    → Document results (THIS COMMAND)
-/speckit.tasks     → Generate implementation tasks
+/speckit.specify                        → Create natural language spec
+/speckit.plan                           → Create technical plan
+/speckit.formalize                      → Generate Alloy model
+.specify/scripts/bash/verify.sh ...     → Verify formal properties (Docker CLI)
+/speckit.verify                         → Document results (THIS COMMAND)
+/speckit.tasks                          → Generate implementation tasks
 ```
 
 The verification can happen iteratively:
 
-- Run `./verify.sh` to execute verification
+- Run `.specify/scripts/bash/verify.sh` to execute verification
 - Review output
 - Use `/speckit.verify` to document results
 - Fix model or spec based on results
-- Re-run `./verify.sh`
+- Re-run `.specify/scripts/bash/verify.sh`
 - Repeat until all properties pass
 
 ## Docker-Specific Troubleshooting

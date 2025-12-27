@@ -1,3 +1,5 @@
+# Alloy AnalyzerのDockerfile
+
 FROM eclipse-temurin:17-jdk-alpine
 
 # Alloy Analyzerのバージョン

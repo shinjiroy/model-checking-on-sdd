@@ -49,22 +49,22 @@ Note: Javaは不要です。
 
 ```bash
 # プロジェクトルートで実行
-cd /path/to/your/speckit-project
+cd /path/to/your-project
 
 # コマンドをコピー
-cp -r speckit-formal-extension/commands/* .specify/templates/commands/
+cp -r /path/to/model-checking-on-sdd/commands/* .specify/templates/commands/
 
 # テンプレートをコピー
-cp -r speckit-formal-extension/templates/* .specify/templates/
+cp -r /path/to/model-checking-on-sdd/templates/* .specify/templates/
 
 # ドキュメントをコピー
 mkdir -p .specify/docs
-cp speckit-formal-extension/docs/FORMAL_METHODS_GUIDE_ja.md .specify/docs/
+cp /path/to/model-checking-on-sdd/docs/FORMAL_METHODS_GUIDE.md .specify/docs/
 
 # Docker環境をコピー
-cp -r speckit-formal-extension/docker ./
-cp speckit-formal-extension/docker-compose.yml ./
-cp speckit-formal-extension/verify.sh ./
+cp -r /path/to/model-checking-on-sdd/docker ./
+cp /path/to/model-checking-on-sdd/docker-compose.yml ./
+cp /path/to/model-checking-on-sdd/verify.sh ./
 chmod +x verify.sh
 
 # Dockerイメージをビルド
@@ -110,7 +110,7 @@ docker-compose build alloy-verify
 ## ファイル構成
 
 ```bash
-speckit-formal-extension/
+model-checking-on-sdd/
 ├── commands/              # Spec Kitコマンド
 │   ├── formalize.md
 │   └── verify.md         # Docker対応
@@ -120,9 +120,9 @@ speckit-formal-extension/
 │   ├── formal-guide-template.md
 │   └── formal-verification-log-template.md
 ├── docs/                  # ドキュメント
-│   ├── README_ja.md      # このファイル
-│   ├── FORMAL_METHODS_GUIDE_ja.md
-│   └── INSTALL_ja.md
+│   ├── README.md      # このファイル
+│   ├── FORMAL_METHODS_GUIDE.md
+│   └── INSTALL.md
 ├── docker/                # Docker環境
 │   ├── Dockerfile
 │   └── verify-alloy.sh
@@ -134,5 +134,5 @@ speckit-formal-extension/
 
 ## 詳細ドキュメント
 
-- **FORMAL_METHODS_GUIDE_ja.md** - 完全な統合ガイド
-- **INSTALL_ja.md** - インストール手順の詳細
+- **FORMAL_METHODS_GUIDE.md** - 完全な統合ガイド
+- **INSTALL.md** - インストール手順の詳細

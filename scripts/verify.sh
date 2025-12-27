@@ -1,11 +1,41 @@
 #!/bin/bash
 # Alloy検証実行スクリプト(ホスト側)
 # Docker経由でAlloy検証を実行
+# 配置場所: .specify/scripts/bash/verify.sh
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+
+# プロジェクトルートを探索（docker-compose.yamlがある場所）
+find_project_root() {
+    local dir="$SCRIPT_DIR"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -f "$dir/docker-compose.yaml" ]] || [[ -f "$dir/docker-compose.yml" ]]; then
+            echo "$dir"
+            return 0
+        fi
+        dir="$(dirname "$dir")"
+    done
+    echo ""
+    return 1
+}
+
+PROJECT_ROOT="$(find_project_root)"
+if [[ -z "$PROJECT_ROOT" ]]; then
+    echo -e "${RED}エラー: docker-compose.yaml が見つかりません${NC}" >&2
+    echo "プロジェクトルートに docker-compose.yaml を配置してください" >&2
+    exit 1
+fi
+
+cd "$PROJECT_ROOT"
+
+# .env ファイルがあれば読み込む（ALLOY_DOCKER_DIR等の設定用）
+if [[ -f ".env" ]]; then
+    set -a
+    source .env
+    set +a
+fi
 
 # カラー出力
 RED='\033[0;31m'

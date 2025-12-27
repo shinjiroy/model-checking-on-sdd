@@ -1,8 +1,14 @@
+# Spec Kit 形式検証拡張 - Alloy Docker環境
+#
+# デフォルト配置: docker/alloy/
+# カスタマイズ: ALLOY_DOCKER_DIR 環境変数で変更可能
+#   例: ALLOY_DOCKER_DIR=.specify/docker/alloy docker-compose build
+
 services:
   # Alloy検証サービス
   alloy-verify:
     build:
-      context: ./docker
+      context: ${ALLOY_DOCKER_DIR:-./docker/alloy}
       dockerfile: Dockerfile
     volumes:
       # Spec Kitのspecsディレクトリをマウント
@@ -10,14 +16,13 @@ services:
       # 検証結果を出力するディレクトリ
       - ./verification-results:/results
     working_dir: /specs
-    # デフォルトでは対話的に実行
     stdin_open: true
     tty: true
 
   # 開発用: Alloy環境にシェルでアクセス
   alloy-shell:
     build:
-      context: ./docker
+      context: ${ALLOY_DOCKER_DIR:-./docker/alloy}
       dockerfile: Dockerfile
     volumes:
       - ./specs:/specs
