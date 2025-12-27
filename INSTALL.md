@@ -1,0 +1,467 @@
+# Spec Kit 形式検証拡張 - インストールガイド
+
+**対応環境**: macOS, Linux, WSL2
+
+---
+
+## 目次
+
+1. [前提条件](#前提条件)
+2. [インストール手順](#インストール手順)
+3. [動作確認](#動作確認)
+4. [ファイル構成](#ファイル構成)
+5. [トラブルシューティング](#トラブルシューティング)
+
+---
+
+## 前提条件
+
+### 必須
+
+1. **Spec Kitがインストール済み**
+   - プロジェクトに`.specify/`ディレクトリが存在
+   - `/speckit.specify`などの基本コマンドが動作
+
+2. **Docker環境**
+   - **macOS**: Docker Desktop for Mac
+   - **Linux**: Docker Engine + Docker Compose
+   - **Windows**: WSL2 + Docker Desktop
+
+3. **確認方法**
+
+   ```bash
+   # Dockerバージョン確認
+   docker --version
+   # 出力例: Docker version 24.0.0, build xxxxx
+   
+   # Docker Composeバージョン確認
+   docker-compose --version
+   # 出力例: Docker Compose version v2.20.0
+   ```
+
+### 不要なもの
+
+- ❌ Java (Docker内で実行されるため不要)
+- ❌ Alloy Analyzer GUI (CLI版を使用)
+
+---
+
+## インストール手順
+
+### ステップ1: パッケージのダウンロード
+
+```bash
+# パッケージを任意の場所にダウンロード・展開
+cd ~/Downloads
+unzip model-checking-on-sdd.zip
+cd model-checking-on-sdd
+```
+
+### ステップ2: Spec Kitプロジェクトへのコピー
+
+```bash
+# Spec Kitプロジェクトのルートに移動
+cd /path/to/your/speckit-project
+
+# パッケージのパスを環境変数に設定(任意)
+FORMAL_PKG=~/Downloads/model-checking-on-sdd
+```
+
+#### 2.1 コマンドファイルをコピー（Claude Codeの場合）
+
+```bash
+# commands/ → .claude/commands/
+mkdir -p .claude/commands
+cp -r ${FORMAL_PKG}/commands/* .claude/commands/
+
+# 確認
+ls .claude/commands/
+# 期待される出力: ... formalize.md verify.md ...
+```
+
+> **Note**: Cursorなど他のエージェントを使用する場合は、各エージェントのコマンド配置先に合わせてください。
+
+#### 2.2 テンプレートファイルをコピー
+
+```bash
+# templates/ → .specify/templates/
+cp -r ${FORMAL_PKG}/templates/* .specify/templates/
+
+# 確認
+ls .specify/templates/ | grep formal
+# 期待される出力:
+# formal-guide-template.md
+# formal-model-template.als
+# formal-properties-template.md
+# formal-verification-log-template.md
+```
+
+#### 2.3 ドキュメントをコピー
+
+```bash
+# ドキュメントディレクトリを作成(存在しない場合)
+mkdir -p .specify/docs
+
+# docs/FORMAL_METHODS_GUIDE.md → .specify/docs/
+cp ${FORMAL_PKG}/docs/FORMAL_METHODS_GUIDE.md .specify/docs/
+
+# 確認
+ls .specify/docs/
+# 期待される出力: ... FORMAL_METHODS_GUIDE.md ...
+```
+
+#### 2.4 Docker環境をコピー
+
+```bash
+# docker/ → ./docker/alloy/ (既存のdocker/と衝突しない)
+mkdir -p docker/alloy
+cp -r ${FORMAL_PKG}/docker/* docker/alloy/
+
+# docker-compose.yaml → ./
+# 注意: 既存のdocker-compose.yamlがある場合はマージが必要
+cp ${FORMAL_PKG}/docker-compose.yaml ./
+
+# .env.example → ./（カスタマイズ用）
+cp ${FORMAL_PKG}/.env.example ./
+
+# verify.sh → .specify/scripts/bash/
+mkdir -p .specify/scripts/bash
+cp ${FORMAL_PKG}/scripts/verify.sh .specify/scripts/bash/
+
+# 実行権限を付与
+chmod +x .specify/scripts/bash/verify.sh
+```
+
+**カスタマイズ:**
+
+docker/alloy/ 以外に配置する場合:
+
+```bash
+# .envファイルを作成してパスを変更
+cp .env.example .env
+# ALLOY_DOCKER_DIR を編集
+```
+
+### ステップ3: Dockerイメージのビルド
+
+```bash
+# プロジェクトルートで実行
+docker-compose build alloy-verify
+```
+
+**ビルド中の出力例:**
+
+```
+[+] Building 45.2s (8/8) FINISHED
+ => [internal] load build definition from Dockerfile
+ => => transferring dockerfile: 485B
+ => [internal] load .dockerignore
+ => [1/3] FROM docker.io/library/eclipse-temurin:17-jdk-alpine
+ => [2/3] WORKDIR /alloy
+ => [3/3] RUN apk add --no-cache wget && ...
+ => exporting to image
+ => => exporting layers
+ => => writing image sha256:...
+ => => naming to docker.io/library/model-checking-on-sdd_alloy-verify
+```
+
+**所要時間**: 初回ビルドは3-5分程度(Alloy JARをダウンロード)
+
+---
+
+## 動作確認
+
+### テスト1: ヘルプ表示
+
+```bash
+.specify/scripts/bash/verify.sh --help
+```
+
+**期待される出力:**
+
+```
+Alloy 形式検証ツール (Docker版)
+
+使い方:
+  ./verify.sh <alloy-file> [options]
+
+引数:
+  alloy-file       検証する.alsファイルのパス
+                   (例: specs/001-purchase/formal/purchase.als)
+
+オプション:
+  --scope N        検証スコープ (デフォルト: 5)
+  --timeout N      タイムアウト秒数 (デフォルト: 300)
+  --format FORMAT  出力形式: text, xml (デフォルト: text)
+  --build          Dockerイメージを再ビルド
+  --shell          Alloy環境のシェルを起動
+  --help           このヘルプを表示
+...
+```
+
+### テスト2: Dockerイメージの確認
+
+```bash
+docker images | grep alloy
+```
+
+**期待される出力:**
+
+```
+model-checking-on-sdd_alloy-verify   latest   abc123def456   5 minutes ago   XYZ MB
+```
+
+### テスト3: AIコーディングエージェントでのコマンド確認
+
+```bash
+# Claude Code、Cursorなどで
+/speckit.formalize
+```
+
+**期待される動作:**
+
+- コマンドが認識される
+- `spec.md`が見つからない旨のエラーが表示される(正常)
+
+---
+
+## ファイル構成
+
+インストール完了後、プロジェクトは以下の構造になります:
+
+```
+your-project/
+│
+├── .claude/                                # Claude Code用
+│   └── commands/
+│       ├── formalize.md                   # ✨ 新規
+│       └── verify.md                      # ✨ 新規
+│
+├── .specify/
+│   ├── memory/
+│   │   └── constitution.md                # 既存
+│   │
+│   ├── templates/
+│   │   ├── spec-template.md               # 既存
+│   │   ├── plan-template.md               # 既存
+│   │   ├── formal-model-template.als      # ✨ 新規
+│   │   ├── formal-properties-template.md  # ✨ 新規
+│   │   ├── formal-guide-template.md       # ✨ 新規
+│   │   └── formal-verification-log-template.md # ✨ 新規
+│   │
+│   ├── scripts/
+│   │   └── bash/
+│   │       └── verify.sh                  # ✨ 新規: 検証スクリプト
+│   │
+│   └── docs/
+│       └── FORMAL_METHODS_GUIDE.md     # ✨ 新規
+│
+├── docker/
+│   └── alloy/                             # ✨ 新規: Alloy Docker環境
+│       ├── Dockerfile
+│       └── verify-alloy.sh
+│
+├── docker-compose.yaml                     # ✨ 新規
+├── .env.example                            # ✨ 新規: カスタマイズ用
+│
+├── specs/
+│   └── {FEATURE_NAME}/
+│       ├── spec.md
+│       ├── plan.md
+│       ├── tasks.md
+│       └── formal/                         # /speckit.formalizeで作成
+│           ├── {feature}.als
+│           ├── properties.md
+│           ├── guide.md
+│           └── verification-log.md
+│
+└── src/
+    └── ... (実装コード)
+```
+
+---
+
+## トラブルシューティング
+
+### コマンドが認識されない
+
+```bash
+/speckit.formalize
+# Error: Command not found
+```
+
+**確認:** `ls .claude/commands/formalize.md`
+
+**解決策:**
+- ファイルが正しい場所にコピーされているか確認
+- AIコーディングエージェントを再起動
+
+---
+
+### テンプレートが見つからない
+
+```bash
+/speckit.formalize
+# Error: Template not found: formal-model-template.als
+```
+
+**確認:** `ls .specify/templates/formal-*`
+
+**解決策:** テンプレートを再コピー
+
+```bash
+cp ${FORMAL_PKG}/templates/formal-* .specify/templates/
+```
+
+---
+
+### Dockerイメージのビルドでファイルが見つからない
+
+```bash
+docker-compose build alloy-verify
+# COPY failed: file not found in build context
+```
+
+**確認:** `ls docker/alloy/`
+
+**解決策:** docker/alloy/ ディレクトリを再コピー
+
+```bash
+mkdir -p docker/alloy
+cp -r ${FORMAL_PKG}/docker/* docker/alloy/
+```
+
+カスタム配置の場合は環境変数を設定:
+
+```bash
+export ALLOY_DOCKER_DIR=<配置先パス>
+docker-compose build alloy-verify
+```
+
+---
+
+### スクリプトの権限エラー
+
+```bash
+.specify/scripts/bash/verify.sh
+# Permission denied
+```
+
+**解決策:**
+
+```bash
+chmod +x .specify/scripts/bash/verify.sh
+```
+
+---
+
+## 次のステップ
+
+インストールが完了したら:
+
+1. ✅ **ドキュメントを読む**
+
+   ```bash
+   cat .specify/docs/FORMAL_METHODS_GUIDE.md
+   ```
+
+2. ✅ **簡単な機能で試す**
+
+   ```bash
+   # 仕様作成
+   /speckit.specify
+
+   # 形式化
+   /speckit.formalize
+
+   # 検証
+   .specify/scripts/bash/verify.sh specs/001-test/formal/test.als
+
+   # 結果文書化
+   /speckit.verify
+   ```
+---
+
+## アンインストール
+
+形式検証拡張を削除する場合:
+
+```bash
+# コマンドを削除（Claude Codeの場合）
+rm .claude/commands/formalize.md
+rm .claude/commands/verify.md
+
+# テンプレートを削除
+rm .specify/templates/formal-*
+
+# スクリプトを削除
+rm .specify/scripts/bash/verify.sh
+
+# ドキュメントを削除
+rm .specify/docs/FORMAL_METHODS_GUIDE.md
+
+# Docker環境を削除
+# Note: インストール時に配置したファイルを削除してください
+# rm -rf docker/alloy
+# rm docker-compose.yml
+
+# Dockerイメージを削除
+docker-compose down
+docker rmi model-checking-on-sdd_alloy-verify
+
+# 生成された形式仕様を削除(オプショナル)
+find specs/ -type d -name "formal" -exec rm -rf {} +
+```
+
+---
+
+## FAQ
+
+**Q: Javaのインストールは本当に不要ですか?**  
+A: はい。Docker内でJavaとAlloyが動作するため、ホストにJavaは不要です。
+
+**Q: Docker Desktopがないと使えませんか?**  
+A: macOSの場合はDocker Desktop推奨。Linux/WSLならDocker Engineでも可能。
+
+**Q: M1/M2 Macで動作しますか?**  
+A: はい。Alpine LinuxベースのイメージはARM64に対応しています。
+
+**Q: オフライン環境で使えますか?**  
+A: Dockerイメージをビルド済みであれば可能。ビルド時のみインターネット接続が必要。
+
+**Q: 既存のSpec Kitファイルに影響はありますか?**  
+A: いいえ。すべて新規ファイルの追加のみで、既存ファイルは変更されません。
+
+**Q: CI/CDに統合できますか?**  
+A: 可能ですが、今回のスコープ外です。GitHub Actions等でdocker-composeを実行できます。
+
+---
+
+## サポート
+
+**問題が解決しない場合:**
+
+1. **ログを確認**
+
+   ```bash
+   # Docker ログ
+   docker-compose logs alloy-verify
+   
+   # ビルドログ
+   docker-compose build --progress=plain alloy-verify
+   ```
+
+2. **デバッグモード**
+
+   ```bash
+   # Alloyコンテナのシェルに入る
+   .specify/scripts/bash/verify.sh --shell
+
+   # コンテナ内で手動実行
+   verify-alloy /specs/001-purchase/formal/purchase.als
+   ```
+
+---
+
+**インストール完了おめでとうございます!**  
+詳細な使い方は `FORMAL_METHODS_GUIDE.md` を参照してください。
