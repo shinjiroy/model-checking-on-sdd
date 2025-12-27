@@ -91,6 +91,7 @@ Sessions are logged in reverse chronological order (newest first).
 ## Verification Metrics
 
 ### Current Status
+
 - **Total Properties**: {X}
 - **Verified (Pass)**: {Y}
 - **Failed**: {Z}
@@ -98,6 +99,7 @@ Sessions are logged in reverse chronological order (newest first).
 - **Success Rate**: {Y/X}%
 
 ### Verification Coverage
+
 - **Last Full Verification**: {DATE}
 - **Highest Scope Tested**: for {N}
 - **Average Verification Time**: {X} seconds
@@ -107,9 +109,11 @@ Sessions are logged in reverse chronological order (newest first).
 ## Issue Tracking
 
 ### Open Issues
+
 {List any open issues discovered during verification}
 
 ### Resolved Issues
+
 {List issues that have been fixed and re-verified}
 
 ---

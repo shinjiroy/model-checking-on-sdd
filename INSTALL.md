@@ -151,7 +151,7 @@ docker-compose build alloy-verify
 
 **ビルド中の出力例:**
 
-```
+```text
 [+] Building 45.2s (8/8) FINISHED
  => [internal] load build definition from Dockerfile
  => => transferring dockerfile: 485B
@@ -179,7 +179,7 @@ docker-compose build alloy-verify
 
 **期待される出力:**
 
-```
+```text
 Alloy 形式検証ツール (Docker版)
 
 使い方:
@@ -207,7 +207,7 @@ docker images | grep alloy
 
 **期待される出力:**
 
-```
+```text
 model-checking-on-sdd_alloy-verify   latest   abc123def456   5 minutes ago   XYZ MB
 ```
 
@@ -229,7 +229,7 @@ model-checking-on-sdd_alloy-verify   latest   abc123def456   5 minutes ago   XYZ
 
 インストール完了後、プロジェクトは以下の構造になります:
 
-```
+```text
 your-project/
 │
 ├── .claude/                                # Claude Code用
@@ -293,6 +293,7 @@ your-project/
 **確認:** `ls .claude/commands/formalize.md`
 
 **解決策:**
+
 - ファイルが正しい場所にコピーされているか確認
 - AIコーディングエージェントを再起動
 
@@ -380,6 +381,7 @@ chmod +x .specify/scripts/bash/verify.sh
    # 結果文書化
    /speckit.verify
    ```
+
 ---
 
 ## アンインストール

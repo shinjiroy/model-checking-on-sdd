@@ -23,7 +23,7 @@ docker-compose build alloy-verify
 
 ### Spec Kitコマンド（ワークフロー順）
 
-```
+```text
 /speckit.specify     # 仕様作成
 /speckit.plan        # 技術設計
 /speckit.formalize   # Alloyモデル生成
@@ -36,7 +36,7 @@ docker-compose build alloy-verify
 
 ### ディレクトリ構造（インストール後）
 
-```
+```text
 .claude/commands/                    # Claude Code用カスタムコマンド
 .specify/
 ├── templates/                       # Alloyモデル・検証テンプレート
@@ -46,7 +46,7 @@ docker/alloy/                        # Alloy CLI実行環境（カスタマイ�
 
 ### 配布パッケージ構造（このリポジトリ）
 
-```
+```text
 commands/                   # → .claude/commands/ へコピー
 templates/                  # → .specify/templates/ へコピー
 scripts/                    # → .specify/scripts/bash/ へコピー
@@ -55,7 +55,7 @@ docker/                     # → docker/alloy/ へコピー
 
 ### 形式検証成果物の配置
 
-```
+```text
 specs/{FEATURE_NAME}/
 ├── spec.md                 # 仕様（変更しない）
 ├── plan.md                 # 技術設計（変更しない）
