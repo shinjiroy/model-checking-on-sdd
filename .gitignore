@@ -1,0 +1,3 @@
+# デフォルトのSpeckit関連ファイル
+.claude/commands/speckit.*
+.specify/

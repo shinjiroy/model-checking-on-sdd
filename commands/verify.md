@@ -1,109 +1,131 @@
-# Formal Verification Execution Command (Alloy)
+# Formal Verification Execution Command (Alloy via Docker CLI)
 
-You are helping execute and document formal verification using Alloy Analyzer.
+You are helping execute and document formal verification using Alloy via Docker CLI.
 
-## Tool: Alloy Analyzer
+## Tool: Alloy Analyzer (Docker CLI Mode)
 
-Alloy Analyzer is a **GUI application** with visual feedback. This command provides a **semi-automated workflow** that:
-1. Guides the user through manual verification in Alloy Analyzer
-2. Collects and documents results
-3. Updates tracking documents
-4. Suggests fixes for any failures
+This command uses Alloy Analyzer in CLI mode via Docker. This provides:
+
+- Automated verification without GUI
+- Consistent environment across team (macOS, WSL, Linux)
+- Easy integration into development workflows
+- Claude Code-friendly text output
 
 ## Context Files
 
 - Alloy Model: `specs/{FEATURE_NAME}/formal/{feature}.als`
 - Properties List: `specs/{FEATURE_NAME}/formal/properties.md`
 - Previous Log: `specs/{FEATURE_NAME}/formal/verification-log.md` (if exists)
+- Verification Script: `verify.sh` (project root)
 
 ## Verification Workflow
 
 ### Step 1: Check Prerequisites
 
 Verify that required files exist:
+
 ```
 Required files:
 ✓ specs/{FEATURE_NAME}/formal/{feature}.als
 ✓ specs/{FEATURE_NAME}/formal/properties.md
+✓ verify.sh (Docker verification script)
+✓ docker-compose.yml
 ```
 
-If missing, inform user:
+If missing model, inform user:
+
 ```
 Error: Formal specification not found. 
 Please run `/speckit.formalize` first to generate the Alloy model.
 ```
 
-### Step 2: Guide User Through Verification
+If missing Docker setup:
 
-Since Alloy Analyzer is a GUI tool, provide clear instructions:
+```
+Error: Docker verification setup not found.
+Please ensure verify.sh and docker-compose.yml are in project root.
+```
+
+### Step 2: Execute Verification via Docker CLI
+
+Instruct user to run verification using Docker:
 
 ```markdown
-## Verification Instructions
+## Docker経由でAlloy検証を実行
 
-**To verify the formal specification, follow these steps:**
+**プロジェクトルートで以下のコマンドを実行してください:**
 
-1. **Open Alloy Analyzer**
-   - Download from: https://alloytools.org/download.html (if not installed)
-   - Launch the application
-
-2. **Load the Model**
-   - File → Open
-   - Navigate to: `specs/{FEATURE_NAME}/formal/{feature}.als`
-
-3. **Execute Verification Commands**
-   
-   You'll see these `check` commands in the model:
-   {List all check commands from the .als file}
-   
-   For each command:
-   - Click the "Execute" button next to the command
-   - Wait for the analysis to complete (a few seconds)
-   - Note the result:
-     * **Green checkmark** = Property PASSED (no counterexample found)
-     * **Red X** = Property FAILED (counterexample found)
-
-4. **Review Counterexamples** (if any failures)
-   - Alloy will display an instance graph showing the counterexample
-   - Click through the instance to understand why the property failed
-   - Use "Next" button to see alternative counterexamples
-
-5. **Report Results**
-   
-   Please provide verification results in this format:
-   ```
-   Property: [Name]
-   Status: PASS / FAIL
-   Scope: for X
-   Notes: [Any observations or counterexample description]
-   ```
+```bash
+./verify.sh specs/{FEATURE_NAME}/formal/{feature}.als
 ```
 
-### Step 3: Collect Results from User
+**オプション:**
 
-Ask the user to provide results:
+- スコープを変更: `./verify.sh ... --scope 7`
+- タイムアウト変更: `./verify.sh ... --timeout 600`
+- イメージ再ビルド: `./verify.sh ... --build`
+
+**検証が完了すると、以下のような出力が表示されます:**
+
 ```
-Please run the verification in Alloy Analyzer and report the results here.
+================================================
+Alloy 形式検証
+================================================
+ファイル: /specs/{feature}.als
+スコープ: 5
+タイムアウト: 300秒
+出力形式: text
+================================================
 
-For each property, tell me:
-- Property name
-- Status (PASS/FAIL)
-- If FAIL: Brief description of the counterexample you saw
+検証開始...
 
-Example format:
-NoDoublePurchase: PASS
-InventoryConsistency: FAIL - Found case where stock becomes negative with concurrent purchases
-BalanceIntegrity: PASS
+[Check 1: PropertyName1]
+  結果: ✅ PASS (反例なし)
+  詳細: 指定されたスコープ内でプロパティが成立
 
-I'll update the tracking documents once you provide the results.
+[Check 2: PropertyName2]
+  結果: ❌ FAIL (反例発見)
+  詳細: [反例の詳細]
+
+[Check 3: PropertyName3]
+  結果: ✅ PASS (反例なし)
+  詳細: 指定されたスコープ内でプロパティが成立
+
+================================================
+検証完了: 3 個のプロパティをチェックしました
+================================================
 ```
+
+検証実行後、出力をコピーしてこのチャットに貼り付けてください。
+
+```
+
+### Step 3: Parse Verification Output
+
+When user provides the verification output, parse it to extract results:
+
+1. **Identify each property checked**
+   - Look for `[Check N: PropertyName]` patterns
+   
+2. **Extract results**
+   - `✅ PASS (反例なし)` → Property passed
+   - `❌ FAIL (反例発見)` → Property failed
+   
+3. **Capture counterexample details** (for failures)
+   - Extract relevant details from output
+
+4. **Summary**
+   - Total properties checked
+   - Pass/fail count
 
 ### Step 4: Update Properties Document
 
-Based on user's results, update `specs/{FEATURE_NAME}/formal/properties.md`:
+Based on parsed output, update `specs/{FEATURE_NAME}/formal/properties.md`:
 
 Change status indicators:
 - `⬜ Not verified` → `✅ PASS` or `❌ FAIL`
 - Add verification date
+- Add scope used
 - Add notes about counterexamples (if any)
 
 Example:
@@ -115,6 +137,7 @@ Example:
 - **Status**: ✅ PASS
 - **Last Verified**: {DATE}
 - **Scope**: for 5
+- **Verified via**: Docker CLI
 - **Notes**: No counterexample found within scope
 
 ### 2. InventoryConsistency
@@ -124,6 +147,7 @@ Example:
 - **Status**: ❌ FAIL
 - **Last Verified**: {DATE}
 - **Scope**: for 5
+- **Verified via**: Docker CLI
 - **Counterexample**: Found scenario where concurrent purchases reduce stock below zero
 - **Action Required**: Add synchronization constraints or stock check
 ```
@@ -138,8 +162,9 @@ Create or append to `specs/{FEATURE_NAME}/formal/verification-log.md`:
 
 **Verifier**: {USER_NAME or "Team Member"}
 **Model Version**: {GIT_COMMIT or DATE}
-**Alloy Analyzer Version**: {VERSION if available}
+**Alloy Version**: 6.1.0 (Docker CLI)
 **Scope Used**: for {SCOPE_NUMBER}
+**Execution Method**: Docker CLI (`verify.sh`)
 
 ### Results Summary
 
@@ -151,16 +176,22 @@ Create or append to `specs/{FEATURE_NAME}/formal/verification-log.md`:
 
 **Overall**: X/Y properties verified successfully
 
+### Docker Output
+
+```
+
+[Include relevant portions of Docker verification output]
+
+```
+
 ### Failed Properties Detail
 
 #### InventoryConsistency
 **Counterexample observed**: 
 Two users simultaneously purchasing the last item in stock resulted in stock = -1
 
-**Instance details**:
-- Product: stock = 1
-- User1 and User2 both execute purchase
-- Final state: stock = -1
+**Analysis**:
+[Analyze based on output details]
 
 ### Actions Required
 - [ ] Fix: Add fact to ensure atomic stock operations
@@ -192,6 +223,7 @@ fact AtomicStockOperations {
 ```
 
 **Option B: Strengthen preconditions**
+
 ```alloy
 pred purchase[u: User, p: Product] {
     // Existing preconditions
@@ -205,6 +237,7 @@ pred purchase[u: User, p: Product] {
 
 **Option C: Refine spec.md**
 If the counterexample reveals a genuine business logic gap, update `spec.md` to clarify:
+
 - How concurrent purchases should be handled
 - Whether optimistic or pessimistic locking is used
 - Stock reservation mechanism
@@ -212,9 +245,11 @@ If the counterexample reveals a genuine business logic gap, update `spec.md` to 
 **Recommendation**: Start with Option B (strengthen preconditions) as it's most practical.
 
 Would you like me to:
+
 1. Update the Alloy model with the suggested fix
 2. Suggest changes to spec.md
 3. Generate additional test scenarios
+
 ```
 
 ### Step 7: Summary Report
@@ -226,6 +261,7 @@ Provide a clear summary:
 
 **Feature**: {FEATURE_NAME}
 **Date**: {DATE}
+**Method**: Docker CLI
 **Results**: {X}/{Y} properties verified
 
 ### Status
@@ -237,7 +273,7 @@ Provide a clear summary:
 **Immediate actions**:
 1. Review counterexample for InventoryConsistency
 2. Choose a fix strategy (model update or spec clarification)
-3. Re-run verification after fixes
+3. Re-run verification after fixes: `./verify.sh specs/{FEATURE_NAME}/formal/{feature}.als`
 
 **Documentation updated**:
 - ✓ `formal/properties.md` - Status updated with verification results
@@ -245,7 +281,7 @@ Provide a clear summary:
 
 **Would you like me to**:
 - Apply suggested fixes to the Alloy model
-- Help interpret a specific counterexample
+- Help interpret the counterexample details
 - Update spec.md to address the issues found
 - Increase verification scope for more thorough checking
 ```
@@ -258,19 +294,21 @@ Provide a clear summary:
 ## Handling Different Scenarios
 
 ### Scenario A: All Properties Pass
+
 ```
-Excellent! All properties verified successfully. ✓
+Excellent! All properties verified successfully via Docker CLI. ✓
 
 This means the formal model satisfies all specified properties within 
 the checked scope (for {SCOPE}). 
 
 Consider:
-- Increasing scope (for 7, for 10) for more thorough verification
+- Increasing scope (--scope 7) for more thorough verification
 - Adding additional properties to verify edge cases
 - Moving forward with implementation knowing the design is sound
 ```
 
 ### Scenario B: Some Properties Fail
+
 ```
 Found {N} property violations that need attention.
 
@@ -282,36 +320,80 @@ These counterexamples reveal potential issues in either:
 I've provided suggested fixes above. Let's address these before implementation.
 ```
 
-### Scenario C: User Hasn't Run Verification Yet
-```
-I'm ready to help document the verification results, but I need you to 
-run Alloy Analyzer first.
+### Scenario C: Docker Execution Error
 
-Follow the instructions in Step 2 above, then report back with the results.
-If you encounter any issues with Alloy Analyzer, let me know and I can help troubleshoot.
+```
+The Docker verification encountered an error. Common issues:
+
+1. **Docker not running**: Start Docker Desktop or Docker daemon
+2. **Image not built**: Run `./verify.sh --build` first
+3. **File path issue**: Ensure path is relative to project root
+4. **Alloy syntax error**: Check the .als file for syntax errors
+
+Try running with debug:
+./verify.sh specs/{FEATURE_NAME}/formal/{feature}.als --build
+
+If error persists, please share the complete error message.
 ```
 
 ## Important Notes
 
-- **Manual process**: Alloy Analyzer is GUI-based, so full automation isn't practical
-- **Scope sensitivity**: Results depend on the scope (for N) - larger scopes take longer but are more thorough
-- **Counterexamples are valuable**: Failures aren't bad - they reveal important edge cases
-- **Iterative process**: Verification → Fix → Re-verify is normal and expected
-- **Document everything**: Each verification session should be logged for traceability
+- **Automated process**: Docker CLI provides automated, reproducible verification
+- **Scope sensitivity**: Results depend on scope (for N) - larger scopes take longer
+- **Counterexamples are valuable**: Failures reveal important edge cases
+- **Iterative process**: Verification → Fix → Re-verify is normal
+- **Document everything**: Each verification session should be logged
+- **Docker required**: Ensure Docker is running before verification
 
 ## Integration with Spec Kit Workflow
 
 This command fits into the workflow as:
+
 ```
 /speckit.specify   → Create natural language spec
 /speckit.plan      → Create technical plan
-/speckit.formalize → Generate Alloy model (NEW)
-/speckit.verify    → Verify formal properties (THIS COMMAND)
+/speckit.formalize → Generate Alloy model
+./verify.sh ...    → Verify formal properties (Docker CLI)
+/speckit.verify    → Document results (THIS COMMAND)
 /speckit.tasks     → Generate implementation tasks
 ```
 
 The verification can happen iteratively:
-- Initial verification often finds issues
-- Fix model or spec
-- Re-verify
+
+- Run `./verify.sh` to execute verification
+- Review output
+- Use `/speckit.verify` to document results
+- Fix model or spec based on results
+- Re-run `./verify.sh`
 - Repeat until all properties pass
+
+## Docker-Specific Troubleshooting
+
+### Docker not running
+
+```
+Error: Cannot connect to Docker daemon
+
+Solution: Start Docker Desktop (macOS) or Docker daemon (Linux/WSL)
+```
+
+### Permission issues
+
+```
+Error: Permission denied
+
+Solution: 
+- macOS/Linux: Ensure user is in docker group
+- WSL: Restart Docker Desktop
+```
+
+### Build failures
+
+```
+Error: Failed to build Alloy image
+
+Solution: 
+1. Check internet connection (downloads Alloy JAR)
+2. Verify Dockerfile is present in docker/ directory
+3. Try manual build: docker-compose build alloy-verify
+```
