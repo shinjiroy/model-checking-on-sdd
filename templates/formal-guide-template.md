@@ -14,6 +14,7 @@ This guide helps you verify the formal specification for [FEATURE_NAME] using Al
 Formal verification mathematically proves that our system design satisfies specific properties. Think of it as "unit tests for the specification" - we're checking that the design is sound before writing any code.
 
 **Why do this?**
+
 - Catch design flaws early (before implementation)
 - Ensure critical properties hold (e.g., no double payments, stock stays consistent)
 - Build confidence in complex logic
@@ -26,7 +27,7 @@ Formal verification mathematically proves that our system design satisfies speci
 ### Prerequisites
 
 1. **Install Alloy Analyzer**
-   - Download: https://alloytools.org/download.html
+   - Download: <https://alloytools.org/download.html>
    - Version: 6.x or higher recommended
    - Requires: Java 8 or higher
 
@@ -163,6 +164,7 @@ Great! The design is sound within the checked scope.
 - Consider increasing scope for extra confidence
 
 **Next steps:**
+
 - Document results in properties.md
 - Update verification-log.md
 - Proceed to implementation with confidence
@@ -177,6 +179,7 @@ Good catch! You've found a potential issue before coding.
 - Needs attention before implementation
 
 **Next steps:**
+
 - Document the counterexample clearly
 - Share findings with the team
 - Determine if it's:
@@ -190,21 +193,30 @@ Good catch! You've found a potential issue before coding.
 
 ## Feature-Specific Properties
 
+<!--
+  ACTION REQUIRED: Customize this section for your feature.
+  Describe each property in plain language so non-technical team members
+  can understand what's being verified and why it matters.
+-->
+
 For [FEATURE_NAME], we're verifying:
 
 ### Property 1: [PropertyName]
-**What it checks**: [Plain language explanation]  
-**Why it matters**: [Business/technical importance]  
+
+**What it checks**: [Plain language explanation]
+**Why it matters**: [Business/technical importance]
 **Example violation**: [What a failure would look like]
 
 ### Property 2: [PropertyName]
-**What it checks**: [Plain language explanation]  
-**Why it matters**: [Business/technical importance]  
+
+**What it checks**: [Plain language explanation]
+**Why it matters**: [Business/technical importance]
 **Example violation**: [What a failure would look like]
 
 ### Property 3: [PropertyName]
-**What it checks**: [Plain language explanation]  
-**Why it matters**: [Business/technical importance]  
+
+**What it checks**: [Plain language explanation]
+**Why it matters**: [Business/technical importance]
 **Example violation**: [What a failure would look like]
 
 ---
@@ -212,22 +224,26 @@ For [FEATURE_NAME], we're verifying:
 ## Troubleshooting
 
 ### Alloy Analyzer won't start
+
 - **Check Java installation**: Alloy requires Java 8+
 - **Try downloading again**: Sometimes the download is corrupted
 - **Check system requirements**: Alloy works on Windows, Mac, Linux
 
 ### Analysis takes forever
+
 - **Reduce scope**: Try `for 3` instead of `for 5`
 - **Simplify model**: The model might be over-constrained
 - **Check your machine**: Alloy is CPU-intensive
 
 ### I don't understand the counterexample
+
 - **Ask for help**: Share a screenshot with the team
 - **Try simpler scope**: Use `for 3` for easier-to-understand examples
 - **Read the assertion**: Look at what property is being checked
 - **Use visualization**: Click through the instance graph slowly
 
 ### Model has syntax errors
+
 - **Don't edit the model**: Unless you know Alloy syntax
 - **Report to team**: Someone may have partially edited it
 - **Regenerate**: Run `/speckit.formalize` again if needed
@@ -258,6 +274,7 @@ For [FEATURE_NAME], we're verifying:
 ## Tips for Success
 
 ✅ **Do:**
+
 - Start with small scopes and work up
 - Document your findings clearly
 - Ask questions if confused
@@ -265,6 +282,7 @@ For [FEATURE_NAME], we're verifying:
 - Celebrate when all checks pass!
 
 ❌ **Don't:**
+
 - Skip checks because they seem to take long
 - Ignore failures without understanding them
 - Edit the model without formal methods knowledge
@@ -275,11 +293,13 @@ For [FEATURE_NAME], we're verifying:
 ## Learning Resources
 
 **New to Alloy?**
-- Alloy tutorial: http://alloytools.org/tutorials/online/
+
+- Alloy tutorial: <http://alloytools.org/tutorials/online/>
 - "Software Abstractions" book by Daniel Jackson
 - Ask [FORMAL_METHODS_LEAD] for a quick walkthrough
 
 **Want to understand the model better?**
+
 - Use `run` commands to visualize valid instances
 - Read comments in the `.als` file
 - Discuss with teammates who know formal methods
@@ -304,8 +324,12 @@ Use this when verifying:
 
 ## Questions?
 
-Contact: [FORMAL_METHODS_LEAD]  
-Documentation: This guide, `properties.md`, `verification-log.md`  
+<!--
+  ACTION REQUIRED: Update contact information for your team.
+-->
+
+Contact: [FORMAL_METHODS_LEAD]
+Documentation: This guide, `properties.md`, `verification-log.md`
 Slack Channel: [TEAM_CHANNEL]
 
 **Remember**: Finding failures is success! It means we caught issues before coding.

@@ -15,7 +15,11 @@ This document records all formal verification sessions for [FEATURE_NAME]. Each 
 
 ## Verification Sessions
 
-Sessions are logged in reverse chronological order (newest first).
+<!--
+  ACTION REQUIRED: Log each verification session using the template below.
+  Copy the template, fill in the details, and append to the Historical Sessions section.
+  Sessions should be logged in reverse chronological order (newest first).
+-->
 
 ---
 
@@ -84,6 +88,11 @@ Sessions are logged in reverse chronological order (newest first).
 
 ## Historical Sessions
 
+<!--
+  ACTION REQUIRED: Append new verification sessions here.
+  Copy the Session Template above, fill in the details, and paste here.
+-->
+
 [Verification sessions will be appended here as they occur]
 
 ---
@@ -107,6 +116,11 @@ Sessions are logged in reverse chronological order (newest first).
 ---
 
 ## Issue Tracking
+
+<!--
+  ACTION REQUIRED: Track issues discovered during verification.
+  Move issues from Open to Resolved when fixed and re-verified.
+-->
 
 ### Open Issues
 

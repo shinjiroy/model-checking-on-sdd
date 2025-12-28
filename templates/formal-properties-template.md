@@ -19,6 +19,12 @@ This document tracks the formal properties verified for [FEATURE_NAME]. Each pro
 
 ## Properties to Verify
 
+<!--
+  ACTION REQUIRED: List all assertions defined in your Alloy model.
+  Each property should have a corresponding `assert` and `check` command in the .als file.
+  Update the status after each verification session.
+-->
+
 ### 1. [PropertyName1]
 
 - **Type**: Safety Property / Liveness Property / Structural Property
@@ -60,16 +66,27 @@ This document tracks the formal properties verified for [FEATURE_NAME]. Each pro
 
 ## Property Categories
 
+<!--
+  ACTION REQUIRED: Categorize your properties by type.
+  This helps prioritize which properties are most critical.
+-->
+
 ### Safety Properties
+
 Properties that guarantee "bad things never happen":
+
 - [List safety properties here]
 
-### Liveness Properties  
+### Liveness Properties
+
 Properties that guarantee "good things eventually happen":
+
 - [List liveness properties here]
 
 ### Structural Properties
+
 Properties about the system's structure and relationships:
+
 - [List structural properties here]
 
 ---
@@ -141,16 +158,23 @@ If a property fails (❌):
 
 ## Coverage Assessment
 
-**Properties defined**: [X]  
-**Properties verified**: [Y]  
+<!--
+  ACTION REQUIRED: Update these metrics after each verification session.
+  Ensure critical business paths and edge cases are covered by properties.
+-->
+
+**Properties defined**: [X]
+**Properties verified**: [Y]
 **Coverage**: [Y/X]%
 
 ### Critical Paths Covered
+
 - [ ] [Critical path 1]
 - [ ] [Critical path 2]
 - [ ] [Critical path 3]
 
 ### Edge Cases Covered
+
 - [ ] [Edge case 1]
 - [ ] [Edge case 2]
 - [ ] [Edge case 3]
