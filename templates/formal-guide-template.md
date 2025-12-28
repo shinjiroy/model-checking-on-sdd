@@ -1,11 +1,11 @@
-# Formal Verification Guide: {FEATURE_NAME}
+# Formal Verification Guide: [FEATURE_NAME]
 
 **For Team Members**  
-**Last Updated**: {DATE}
+**Last Updated**: [DATE]
 
 ## Purpose
 
-This guide helps you verify the formal specification for {FEATURE_NAME} using Alloy Analyzer. No prior formal methods experience is required - just follow these steps.
+This guide helps you verify the formal specification for [FEATURE_NAME] using Alloy Analyzer. No prior formal methods experience is required - just follow these steps.
 
 ---
 
@@ -31,14 +31,14 @@ Formal verification mathematically proves that our system design satisfies speci
    - Requires: Java 8 or higher
 
 2. **Locate the Model**
-   - File: `specs/{FEATURE_NAME}/formal/{feature}.als`
+   - File: `specs/[FEATURE_NAME]/formal/[feature].als`
    - This is the formal specification you'll be verifying
 
 ### Basic Workflow
 
 ```
 1. Open Alloy Analyzer
-2. Load {feature}.als
+2. Load [feature].als
 3. Click "Execute" on check commands
 4. Review results
 5. Report findings
@@ -55,7 +55,7 @@ Launch the application (icon looks like a stylized "A").
 ### Step 2: Load the Model
 
 1. Click **File → Open**
-2. Navigate to: `specs/{FEATURE_NAME}/formal/{feature}.als`
+2. Navigate to: `specs/[FEATURE_NAME]/formal/[feature].als`
 3. The model source code will appear in the editor pane
 
 ### Step 3: Understand the Model Structure
@@ -190,22 +190,22 @@ Good catch! You've found a potential issue before coding.
 
 ## Feature-Specific Properties
 
-For {FEATURE_NAME}, we're verifying:
+For [FEATURE_NAME], we're verifying:
 
-### Property 1: {PropertyName}
-**What it checks**: {Plain language explanation}  
-**Why it matters**: {Business/technical importance}  
-**Example violation**: {What a failure would look like}
+### Property 1: [PropertyName]
+**What it checks**: [Plain language explanation]  
+**Why it matters**: [Business/technical importance]  
+**Example violation**: [What a failure would look like]
 
-### Property 2: {PropertyName}
-**What it checks**: {Plain language explanation}  
-**Why it matters**: {Business/technical importance}  
-**Example violation**: {What a failure would look like}
+### Property 2: [PropertyName]
+**What it checks**: [Plain language explanation]  
+**Why it matters**: [Business/technical importance]  
+**Example violation**: [What a failure would look like]
 
-### Property 3: {PropertyName}
-**What it checks**: {Plain language explanation}  
-**Why it matters**: {Business/technical importance}  
-**Example violation**: {What a failure would look like}
+### Property 3: [PropertyName]
+**What it checks**: [Plain language explanation]  
+**Why it matters**: [Business/technical importance]  
+**Example violation**: [What a failure would look like]
 
 ---
 
@@ -249,8 +249,8 @@ For {FEATURE_NAME}, we're verifying:
    - Brief description of the counterexample
 
 3. **Ask the team**:
-   - Post in {TEAM_CHANNEL}
-   - Mention {FORMAL_METHODS_LEAD}
+   - Post in [TEAM_CHANNEL]
+   - Mention [FORMAL_METHODS_LEAD]
    - Share your screenshots and notes
 
 ---
@@ -277,7 +277,7 @@ For {FEATURE_NAME}, we're verifying:
 **New to Alloy?**
 - Alloy tutorial: http://alloytools.org/tutorials/online/
 - "Software Abstractions" book by Daniel Jackson
-- Ask {FORMAL_METHODS_LEAD} for a quick walkthrough
+- Ask [FORMAL_METHODS_LEAD] for a quick walkthrough
 
 **Want to understand the model better?**
 - Use `run` commands to visualize valid instances
@@ -291,7 +291,7 @@ For {FEATURE_NAME}, we're verifying:
 Use this when verifying:
 
 - [ ] Alloy Analyzer installed and working
-- [ ] Model file opened: `{feature}.als`
+- [ ] Model file opened: `[feature].als`
 - [ ] All `check` commands executed
 - [ ] Results recorded (✅ or ❌)
 - [ ] Counterexamples documented (if any)
@@ -304,8 +304,8 @@ Use this when verifying:
 
 ## Questions?
 
-Contact: {FORMAL_METHODS_LEAD}  
+Contact: [FORMAL_METHODS_LEAD]  
 Documentation: This guide, `properties.md`, `verification-log.md`  
-Slack Channel: {TEAM_CHANNEL}
+Slack Channel: [TEAM_CHANNEL]
 
 **Remember**: Finding failures is success! It means we caught issues before coding.

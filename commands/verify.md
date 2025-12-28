@@ -1,3 +1,7 @@
+---
+description: Execute and document formal verification using Alloy via Docker CLI. (project)
+---
+
 # Formal Verification Execution Command (Alloy via Docker CLI)
 
 You are helping execute and document formal verification using Alloy via Docker CLI.
@@ -13,9 +17,9 @@ This command uses Alloy Analyzer in CLI mode via Docker. This provides:
 
 ## Context Files
 
-- Alloy Model: `specs/{FEATURE_NAME}/formal/{feature}.als`
-- Properties List: `specs/{FEATURE_NAME}/formal/properties.md`
-- Previous Log: `specs/{FEATURE_NAME}/formal/verification-log.md` (if exists)
+- Alloy Model: `specs/[FEATURE_NAME]/formal/[feature].als`
+- Properties List: `specs/[FEATURE_NAME]/formal/properties.md`
+- Previous Log: `specs/[FEATURE_NAME]/formal/verification-log.md` (if exists)
 - Verification Script: `.specify/scripts/bash/verify.sh`
 
 ## Verification Workflow
@@ -26,8 +30,8 @@ Verify that required files exist:
 
 ```
 Required files:
-✓ specs/{FEATURE_NAME}/formal/{feature}.als
-✓ specs/{FEATURE_NAME}/formal/properties.md
+✓ specs/[FEATURE_NAME]/formal/[feature].als
+✓ specs/[FEATURE_NAME]/formal/properties.md
 ✓ .specify/scripts/bash/verify.sh (Docker verification script)
 ✓ docker-compose.yaml
 ```
@@ -56,7 +60,7 @@ Instruct user to run verification using Docker:
 **プロジェクトルートで以下のコマンドを実行してください:**
 
 ```bash
-.specify/scripts/bash/verify.sh specs/{FEATURE_NAME}/formal/{feature}.als
+.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als
 ```
 
 **オプション:**
@@ -71,7 +75,7 @@ Instruct user to run verification using Docker:
 ================================================
 Alloy 形式検証
 ================================================
-ファイル: /specs/{feature}.als
+ファイル: /specs/[feature].als
 スコープ: 5
 タイムアウト: 300秒
 出力形式: text
@@ -120,7 +124,7 @@ When user provides the verification output, parse it to extract results:
 
 ### Step 4: Update Properties Document
 
-Based on parsed output, update `specs/{FEATURE_NAME}/formal/properties.md`:
+Based on parsed output, update `specs/[FEATURE_NAME]/formal/properties.md`:
 
 Change status indicators:
 - `⬜ Not verified` → `✅ PASS` or `❌ FAIL`
@@ -135,7 +139,7 @@ Example:
 - **Description**: No user can purchase the same product twice simultaneously
 - **Command**: `check NoDoublePurchase for 5`
 - **Status**: ✅ PASS
-- **Last Verified**: {DATE}
+- **Last Verified**: [DATE]
 - **Scope**: for 5
 - **Verified via**: Docker CLI
 - **Notes**: No counterexample found within scope
@@ -145,7 +149,7 @@ Example:
 - **Description**: Product stock never goes negative
 - **Command**: `check InventoryConsistency for 5`
 - **Status**: ❌ FAIL
-- **Last Verified**: {DATE}
+- **Last Verified**: [DATE]
 - **Scope**: for 5
 - **Verified via**: Docker CLI
 - **Counterexample**: Found scenario where concurrent purchases reduce stock below zero
@@ -154,16 +158,16 @@ Example:
 
 ### Step 5: Update Verification Log
 
-Create or append to `specs/{FEATURE_NAME}/formal/verification-log.md`:
+Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`:
 
 ```markdown
 ---
-## Verification Session: {TIMESTAMP}
+## Verification Session: [TIMESTAMP]
 
-**Verifier**: {USER_NAME or "Team Member"}
-**Model Version**: {GIT_COMMIT or DATE}
+**Verifier**: [USER_NAME or "Team Member"]
+**Model Version**: [GIT_COMMIT or DATE]
 **Alloy Version**: 6.1.0 (Docker CLI)
-**Scope Used**: for {SCOPE_NUMBER}
+**Scope Used**: for [SCOPE_NUMBER]
 **Execution Method**: Docker CLI (`verify.sh`)
 
 ### Results Summary
@@ -174,7 +178,7 @@ Create or append to `specs/{FEATURE_NAME}/formal/verification-log.md`:
 | InventoryConsistency | ❌ FAIL | Concurrent purchase issue |
 | BalanceIntegrity | ✅ PASS | Verified within scope |
 
-**Overall**: X/Y properties verified successfully
+**Overall**: [X]/[Y] properties verified successfully
 
 ### Docker Output
 
@@ -259,10 +263,10 @@ Provide a clear summary:
 ```markdown
 ## Verification Complete ✓
 
-**Feature**: {FEATURE_NAME}
-**Date**: {DATE}
+**Feature**: [FEATURE_NAME]
+**Date**: [DATE]
 **Method**: Docker CLI
-**Results**: {X}/{Y} properties verified
+**Results**: [X]/[Y] properties verified
 
 ### Status
 ✅ Passed: NoDoublePurchase, BalanceIntegrity
@@ -273,7 +277,7 @@ Provide a clear summary:
 **Immediate actions**:
 1. Review counterexample for InventoryConsistency
 2. Choose a fix strategy (model update or spec clarification)
-3. Re-run verification after fixes: `.specify/scripts/bash/verify.sh specs/{FEATURE_NAME}/formal/{feature}.als`
+3. Re-run verification after fixes: `.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als`
 
 **Documentation updated**:
 - ✓ `formal/properties.md` - Status updated with verification results
@@ -288,8 +292,8 @@ Provide a clear summary:
 
 ## Output Files Modified
 
-1. `specs/{FEATURE_NAME}/formal/properties.md` - Updated with results
-2. `specs/{FEATURE_NAME}/formal/verification-log.md` - Appended with session log
+1. `specs/[FEATURE_NAME]/formal/properties.md` - Updated with results
+2. `specs/[FEATURE_NAME]/formal/verification-log.md` - Appended with session log
 
 ## Handling Different Scenarios
 
@@ -299,7 +303,7 @@ Provide a clear summary:
 Excellent! All properties verified successfully via Docker CLI. ✓
 
 This means the formal model satisfies all specified properties within 
-the checked scope (for {SCOPE}). 
+the checked scope (for [SCOPE]). 
 
 Consider:
 - Increasing scope (--scope 7) for more thorough verification
@@ -310,7 +314,7 @@ Consider:
 ### Scenario B: Some Properties Fail
 
 ```
-Found {N} property violations that need attention.
+Found [N] property violations that need attention.
 
 These counterexamples reveal potential issues in either:
 1. The formal model (needs refinement)
@@ -331,7 +335,7 @@ The Docker verification encountered an error. Common issues:
 4. **Alloy syntax error**: Check the .als file for syntax errors
 
 Try running with debug:
-.specify/scripts/bash/verify.sh specs/{FEATURE_NAME}/formal/{feature}.als --build
+.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als --build
 
 If error persists, please share the complete error message.
 ```
@@ -394,6 +398,6 @@ Error: Failed to build Alloy image
 
 Solution: 
 1. Check internet connection (downloads Alloy JAR)
-2. Verify Dockerfile is present in docker/ directory
+2. Verify Dockerfile is present in docker/alloy/ directory
 3. Try manual build: docker-compose build alloy-verify
 ```

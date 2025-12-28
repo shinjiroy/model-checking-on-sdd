@@ -1,14 +1,14 @@
-# Formal Verification Log: {FEATURE_NAME}
+# Formal Verification Log: [FEATURE_NAME]
 
-This document records all formal verification sessions for {FEATURE_NAME}. Each verification run is logged here with results and actions taken.
+This document records all formal verification sessions for [FEATURE_NAME]. Each verification run is logged here with results and actions taken.
 
 ---
 
 ## Initial Setup
 
-**Model Created**: {DATE}  
-**Initial Model File**: `{feature}.als`  
-**Properties Defined**: {X}  
+**Model Created**: [DATE]  
+**Initial Model File**: `[feature].als`  
+**Properties Defined**: [X]  
 **Verification Tool**: Alloy Analyzer
 
 ---
@@ -23,12 +23,12 @@ Sessions are logged in reverse chronological order (newest first).
 
 ```markdown
 ---
-## Verification Session: {TIMESTAMP}
+## Verification Session: [TIMESTAMP]
 
-**Verifier**: {USER_NAME or "Team Member"}
-**Model Version**: {GIT_COMMIT_HASH or DATE}
-**Alloy Analyzer Version**: {VERSION}
-**Scope Used**: for {N}
+**Verifier**: [USER_NAME or "Team Member"]
+**Model Version**: [GIT_COMMIT_HASH or DATE]
+**Alloy Analyzer Version**: [VERSION]
+**Scope Used**: for [N]
 
 ### Results Summary
 
@@ -55,19 +55,19 @@ Sessions are logged in reverse chronological order (newest first).
 ❌ **PropertyName2**
 
 **Counterexample Description**:
-{Describe the scenario that violates the property in plain language}
+[Describe the scenario that violates the property in plain language]
 
 **Instance Details**:
-{Key details from the counterexample graph}
+[Key details from the counterexample graph]
 - Entity1: attribute = value
 - Entity2: attribute = value
 - Relationship: ...
 
 **Root Cause Analysis**:
-{Analysis of why this violation occurred}
+[Analysis of why this violation occurred]
 
 **Proposed Fix**:
-{Description of how to address the issue}
+[Description of how to address the issue]
 
 ### Actions Taken
 
@@ -77,14 +77,14 @@ Sessions are logged in reverse chronological order (newest first).
 
 ### Notes
 
-{Any additional observations, concerns, or decisions}
+[Any additional observations, concerns, or decisions]
 ```
 
 ---
 
 ## Historical Sessions
 
-{Verification sessions will be appended here as they occur}
+[Verification sessions will be appended here as they occur]
 
 ---
 
@@ -92,17 +92,17 @@ Sessions are logged in reverse chronological order (newest first).
 
 ### Current Status
 
-- **Total Properties**: {X}
-- **Verified (Pass)**: {Y}
-- **Failed**: {Z}
-- **Not Yet Verified**: {W}
-- **Success Rate**: {Y/X}%
+- **Total Properties**: [X]
+- **Verified (Pass)**: [Y]
+- **Failed**: [Z]
+- **Not Yet Verified**: [W]
+- **Success Rate**: [Y/X]%
 
 ### Verification Coverage
 
-- **Last Full Verification**: {DATE}
-- **Highest Scope Tested**: for {N}
-- **Average Verification Time**: {X} seconds
+- **Last Full Verification**: [DATE]
+- **Highest Scope Tested**: for [N]
+- **Average Verification Time**: [X] seconds
 
 ---
 
@@ -110,14 +110,14 @@ Sessions are logged in reverse chronological order (newest first).
 
 ### Open Issues
 
-{List any open issues discovered during verification}
+[List any open issues discovered during verification]
 
 ### Resolved Issues
 
-{List issues that have been fixed and re-verified}
+[List issues that have been fixed and re-verified]
 
 ---
 
 ## Notes
 
-{General notes about the verification process, model evolution, or lessons learned}
+[General notes about the verification process, model evolution, or lessons learned]

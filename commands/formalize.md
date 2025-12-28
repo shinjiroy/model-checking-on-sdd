@@ -1,3 +1,7 @@
+---
+description: Generate Alloy formal specification from natural language spec. (project)
+---
+
 # Formal Specification Generation Command (Alloy)
 
 You are an expert in formal methods using Alloy, helping to create formal specifications from natural language requirements.
@@ -16,21 +20,21 @@ We use **Alloy** exclusively for formal verification because:
 
 Create **exactly one** Alloy model file per specification:
 
-- File location: `specs/{FEATURE_NAME}/formal/{feature}.als`
+- File location: `specs/[FEATURE_NAME]/formal/[feature].als`
 - Contains all signatures, facts, predicates, and assertions for this feature
 - If a model becomes too large (>200 lines), this indicates the spec should be split
 
 ## Context Files (Read These First)
 
 1. Constitution: `.specify/memory/constitution.md`
-2. Feature Spec: `specs/{FEATURE_NAME}/spec.md`
-3. Technical Plan: `specs/{FEATURE_NAME}/plan.md` (if exists)
+2. Feature Spec: `specs/[FEATURE_NAME]/spec.md`
+3. Technical Plan: `specs/[FEATURE_NAME]/plan.md` (if exists)
 
 ## Your Task
 
 ### Step 1: Analyze the Specification
 
-Read `specs/{FEATURE_NAME}/spec.md` and identify:
+Read `specs/[FEATURE_NAME]/spec.md` and identify:
 
 **Domain entities**: What are the main entities? (User, Product, Order, Cart, etc.)
 **Relationships**: How do entities relate to each other?
@@ -65,22 +69,22 @@ Your choice:
 Create the formal verification directory:
 
 ```
-specs/{FEATURE_NAME}/formal/
+specs/[FEATURE_NAME]/formal/
 ```
 
 ### Step 4: Generate Alloy Model
 
-Create `specs/{FEATURE_NAME}/formal/{feature}.als` using the template at `.specify/templates/formal-model-template.als`.
+Create `specs/[FEATURE_NAME]/formal/[feature].als` using the template at `.specify/templates/formal-model-template.als`.
 
 **Structure of the model**:
 
 ```alloy
 /**
- * {FEATURE_NAME} - Formal Specification
+ * [FEATURE_NAME] - Formal Specification
  * 
- * Generated from: specs/{FEATURE_NAME}/spec.md
- * Date: {DATE}
- * Purpose: {Brief description from spec.md}
+ * Generated from: specs/[FEATURE_NAME]/spec.md
+ * Date: [DATE]
+ * Purpose: [Brief description from spec.md]
  */
 
 // ============================================================================
@@ -184,7 +188,7 @@ check InventoryConsistency for 5
 
 ### Step 5: Generate Properties Document
 
-Create `specs/{FEATURE_NAME}/formal/properties.md` listing all properties to verify:
+Create `specs/[FEATURE_NAME]/formal/properties.md` listing all properties to verify:
 
 Use template: `.specify/templates/formal-properties-template.md`
 
@@ -197,7 +201,7 @@ Fill in:
 
 ### Step 6: Generate Team Guide
 
-Create `specs/{FEATURE_NAME}/formal/guide.md` to help team members verify:
+Create `specs/[FEATURE_NAME]/formal/guide.md` to help team members verify:
 
 Use template: `.specify/templates/formal-guide-template.md`
 
@@ -214,10 +218,10 @@ After generating all files, inform the user:
 ```markdown
 ## Formal Specification Generated ✓
 
-I've created the Alloy formal specification for {FEATURE_NAME}:
+I've created the Alloy formal specification for [FEATURE_NAME]:
 
 **Files created**:
-- `formal/{feature}.als` - Alloy model (XX lines)
+- `formal/[feature].als` - Alloy model (XX lines)
 - `formal/properties.md` - Properties to verify (X properties)
 - `formal/guide.md` - Verification guide for the team
 
@@ -239,9 +243,9 @@ I've created the Alloy formal specification for {FEATURE_NAME}:
 
 Generate exactly these files:
 
-1. `specs/{FEATURE_NAME}/formal/{feature}.als` - Single Alloy model
-2. `specs/{FEATURE_NAME}/formal/properties.md` - Verification checklist
-3. `specs/{FEATURE_NAME}/formal/guide.md` - Team verification guide
+1. `specs/[FEATURE_NAME]/formal/[feature].als` - Single Alloy model
+2. `specs/[FEATURE_NAME]/formal/properties.md` - Verification checklist
+3. `specs/[FEATURE_NAME]/formal/guide.md` - Team verification guide
 
 ## Important Constraints
 
