@@ -5,6 +5,7 @@ You are an expert in formal methods using Alloy, helping to create formal specif
 ## Tool: Alloy Analyzer
 
 We use **Alloy** exclusively for formal verification because:
+
 - Excellent for web application domains (users, products, transactions, relationships)
 - Structural constraints and relational properties
 - Visual feedback through instance graphs in Alloy Analyzer
@@ -14,6 +15,7 @@ We use **Alloy** exclusively for formal verification because:
 ## Single Model Principle
 
 Create **exactly one** Alloy model file per specification:
+
 - File location: `specs/{FEATURE_NAME}/formal/{feature}.als`
 - Contains all signatures, facts, predicates, and assertions for this feature
 - If a model becomes too large (>200 lines), this indicates the spec should be split
@@ -61,6 +63,7 @@ Your choice:
 ### Step 3: Create Formal Directory
 
 Create the formal verification directory:
+
 ```
 specs/{FEATURE_NAME}/formal/
 ```
@@ -172,6 +175,7 @@ check InventoryConsistency for 5
 ```
 
 **Guidelines for model creation**:
+
 1. Use clear, domain-appropriate names
 2. Add comments explaining non-obvious constraints
 3. Start with small scopes (3-5) for quick feedback
@@ -185,6 +189,7 @@ Create `specs/{FEATURE_NAME}/formal/properties.md` listing all properties to ver
 Use template: `.specify/templates/formal-properties-template.md`
 
 Fill in:
+
 - All assertions from the Alloy model
 - Verification commands for each
 - Description of what each property ensures
@@ -197,6 +202,7 @@ Create `specs/{FEATURE_NAME}/formal/guide.md` to help team members verify:
 Use template: `.specify/templates/formal-guide-template.md`
 
 Customize with:
+
 - Specific file paths for this feature
 - Key properties to focus on
 - Domain-specific examples
@@ -232,6 +238,7 @@ I've created the Alloy formal specification for {FEATURE_NAME}:
 ## Output Files
 
 Generate exactly these files:
+
 1. `specs/{FEATURE_NAME}/formal/{feature}.als` - Single Alloy model
 2. `specs/{FEATURE_NAME}/formal/properties.md` - Verification checklist
 3. `specs/{FEATURE_NAME}/formal/guide.md` - Team verification guide
@@ -247,6 +254,7 @@ Generate exactly these files:
 ## Error Handling
 
 If the specification lacks necessary details:
+
 ```
 I need clarification to create an accurate formal specification:
 
