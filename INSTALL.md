@@ -90,7 +90,6 @@ cp -r ${FORMAL_PKG}/templates/* .specify/templates/
 # 確認
 ls .specify/templates/ | grep formal
 # 期待される出力:
-# formal-guide-template.md
 # formal-model-template.als
 # formal-properties-template.md
 # formal-verification-log-template.md
@@ -246,7 +245,6 @@ your-project/
 │   │   ├── plan-template.md               # 既存
 │   │   ├── formal-model-template.als      # ✨ 新規
 │   │   ├── formal-properties-template.md  # ✨ 新規
-│   │   ├── formal-guide-template.md       # ✨ 新規
 │   │   └── formal-verification-log-template.md # ✨ 新規
 │   │
 │   ├── scripts/
@@ -272,7 +270,6 @@ your-project/
 │       └── formal/                         # /speckit.formalizeで作成
 │           ├── {feature}.als
 │           ├── properties.md
-│           ├── guide.md
 │           └── verification-log.md
 │
 └── src/

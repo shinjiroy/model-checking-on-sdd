@@ -97,13 +97,12 @@ specs/001-purchase-flow/
 
 ```
 specs/{FEATURE_NAME}/
-├── spec.md                   # ✅ 形式ツールにより変更されない
-├── plan.md                   # ✅ 形式ツールにより変更されない
-├── tasks.md                  # ✅ 形式ツールにより変更されない
-└── formal/                   # ✅ すべての形式作業はここに隔離
+├── spec.md                   # ✅ 当リポジトリのコマンドにより変更されない
+├── plan.md                   # ✅ 当リポジトリのコマンドにより変更されない
+├── tasks.md                  # ✅ 当リポジトリのコマンドにより変更されない
+└── formal/                   # ✅ すべての作業はここに隔離
     ├── {feature}.als
     ├── properties.md
-    ├── guide.md
     └── verification-log.md
 ```
 
@@ -296,13 +295,11 @@ specs/{FEATURE_NAME}/
 2. エンティティ、関係性、操作を特定
 3. `formal/{feature}.als`(Alloyモデル)を生成
 4. `formal/properties.md`(検証チェックリスト)を生成
-5. `formal/guide.md`(チーム向け手順)を生成
 
 **出力ファイル**:
 
 - `specs/{FEATURE_NAME}/formal/{feature}.als`
 - `specs/{FEATURE_NAME}/formal/properties.md`
-- `specs/{FEATURE_NAME}/formal/guide.md`
 
 **使用タイミング**:
 
@@ -497,14 +494,6 @@ assert UserProperty {
 - 反例(あれば)
 - 取られたアクション
 
-#### 3. ガイドを最新に保つ
-
-`guide.md`を更新するタイミング:
-
-- プロパティ定義が変更されたとき
-- チームが新しいことを学んだとき
-- 一般的な問題が発見されたとき
-
 ---
 
 ## よくある落とし穴
@@ -619,7 +608,7 @@ check NoDoublePurchase for 10
 #### チームメンバー
 
 - 形式仕様をレビュー(Alloyを書く必要はない)
-- `guide.md`に従って検証を実行
+- `verify.sh`を使って検証を実行
 - 結果を報告
 - 反例について質問を提起
 
@@ -641,7 +630,6 @@ check NoDoublePurchase for 10
 
 3. **チームがレビュー**(オプショナル):
    - `properties.md`は重要なシナリオをカバーしているか?
-   - `guide.md`はチーム検証に明確か?
 
 #### 検証結果レビュー
 
@@ -674,7 +662,7 @@ check NoDoublePurchase for 10
 
 行き詰まったら:
 
-1. `guide.md`のトラブルシューティングセクションをレビュー
+1. このドキュメントのトラブルシューティングセクションをレビュー
 2. リーダー（形式手法分かる人）に質問: {LEAD_NAME}
 3. チームディスカッション: {TEAM_CHANNEL}
 4. 外部リソース: Alloyコミュニティ、ドキュメント
@@ -960,7 +948,6 @@ check NoUnauthorizedAccess for 5
 ファイル:
   formal/{feature}.als → specごとに単一モデル
   formal/properties.md → 検証チェックリスト
-  formal/guide.md → チーム向け手順
   formal/verification-log.md → 履歴記録
 
 検証:

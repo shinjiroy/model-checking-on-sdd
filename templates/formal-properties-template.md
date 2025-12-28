@@ -193,4 +193,3 @@ If a property fails (❌):
 - **Technical Plan**: `../plan.md`
 - **Alloy Model**: `./[feature].als`
 - **Verification Log**: `./verification-log.md`
-- **Team Guide**: `./guide.md`

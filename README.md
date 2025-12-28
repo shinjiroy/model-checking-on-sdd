@@ -117,7 +117,6 @@ model-checking-on-sdd/
 ├── templates/             # テンプレート
 │   ├── formal-model-template.als
 │   ├── formal-properties-template.md
-│   ├── formal-guide-template.md
 │   └── formal-verification-log-template.md
 ├── docs/                  # ドキュメント
 │   ├── README.md      # このファイル

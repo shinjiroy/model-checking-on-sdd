@@ -197,19 +197,7 @@ Fill in:
 - Description of what each property ensures
 - Initial status (unchecked)
 
-### Step 6: Generate Team Guide
-
-Create `specs/[FEATURE_NAME]/formal/guide.md` to help team members verify:
-
-Use template: `.specify/templates/formal-guide-template.md`
-
-Customize with:
-
-- Specific file paths for this feature
-- Key properties to focus on
-- Domain-specific examples
-
-### Step 7: Report Completion
+### Step 6: Report Completion
 
 After generating all files, inform the user:
 
@@ -221,12 +209,11 @@ I've created the Alloy formal specification for [FEATURE_NAME]:
 **Files created**:
 - `formal/[feature].als` - Alloy model (XX lines)
 - `formal/properties.md` - Properties to verify (X properties)
-- `formal/guide.md` - Verification guide for the team
 
 **Next steps**:
 1. Review the Alloy model for accuracy
-2. Use `/speckit.verify` to run verification (requires Alloy Analyzer)
-3. Or manually verify using Alloy Analyzer GUI
+2. Run verification: `.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als`
+3. Use `/speckit.verify` to document results
 
 **Key properties defined**:
 - [List key assertions from the model]
@@ -243,7 +230,6 @@ Generate exactly these files:
 
 1. `specs/[FEATURE_NAME]/formal/[feature].als` - Single Alloy model
 2. `specs/[FEATURE_NAME]/formal/properties.md` - Verification checklist
-3. `specs/[FEATURE_NAME]/formal/guide.md` - Team verification guide
 
 ## Important Constraints
 
