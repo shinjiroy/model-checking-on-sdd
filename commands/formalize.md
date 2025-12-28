@@ -1,10 +1,18 @@
 ---
 description: Generate Alloy formal specification from natural language spec. (project)
+handoffs:
+  - label: Run Verification
+    agent: speckit.verify
+    prompt: Verify the generated Alloy model
 ---
 
-# Formal Specification Generation Command (Alloy)
+## User Input
 
-You are an expert in formal methods using Alloy, helping to create formal specifications from natural language requirements.
+```text
+$ARGUMENTS
+```
+
+You **MUST** consider the user input before proceeding (if not empty).
 
 ## Tool: Alloy Analyzer
 
@@ -30,7 +38,7 @@ Create **exactly one** Alloy model file per specification:
 2. Feature Spec: `specs/[FEATURE_NAME]/spec.md`
 3. Technical Plan: `specs/[FEATURE_NAME]/plan.md` (if exists)
 
-## Your Task
+## Outline
 
 ### Step 1: Analyze the Specification
 
@@ -48,7 +56,7 @@ Read `specs/[FEATURE_NAME]/spec.md` and identify:
 If the specification appears to cover multiple independent features (>200 lines of Alloy expected), **STOP and ask**:
 
 ```
-The specification appears complex and may cover multiple independent features. 
+The specification appears complex and may cover multiple independent features.
 This could result in a large Alloy model (>200 lines).
 
 I recommend reviewing whether this spec should be split into smaller, independent features:
@@ -81,7 +89,7 @@ Create `specs/[FEATURE_NAME]/formal/[feature].als` using the template at `.speci
 ```alloy
 /**
  * [FEATURE_NAME] - Formal Specification
- * 
+ *
  * Generated from: specs/[FEATURE_NAME]/spec.md
  * Date: [DATE]
  * Purpose: [Brief description from spec.md]
@@ -129,7 +137,7 @@ pred purchase[u: User, p: Product] {
     // Preconditions
     u.balance >= p.price
     p.stock > 0
-    
+
     // Postconditions (in a separate predicate for before/after)
 }
 
@@ -211,7 +219,7 @@ Customize with:
 - Key properties to focus on
 - Domain-specific examples
 
-### Step 7: Inform User
+### Step 7: Report Completion
 
 After generating all files, inform the user:
 

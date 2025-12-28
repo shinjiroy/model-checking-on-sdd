@@ -2,9 +2,13 @@
 description: Execute and document formal verification using Alloy via Docker CLI. (project)
 ---
 
-# Formal Verification Execution Command (Alloy via Docker CLI)
+## User Input
 
-You are helping execute and document formal verification using Alloy via Docker CLI.
+```text
+$ARGUMENTS
+```
+
+You **MUST** consider the user input before proceeding (if not empty).
 
 ## Tool: Alloy Analyzer (Docker CLI Mode)
 
@@ -22,7 +26,7 @@ This command uses Alloy Analyzer in CLI mode via Docker. This provides:
 - Previous Log: `specs/[FEATURE_NAME]/formal/verification-log.md` (if exists)
 - Verification Script: `.specify/scripts/bash/verify.sh`
 
-## Verification Workflow
+## Outline
 
 ### Step 1: Check Prerequisites
 
@@ -39,7 +43,7 @@ Required files:
 If missing model, inform user:
 
 ```
-Error: Formal specification not found. 
+Error: Formal specification not found.
 Please run `/speckit.formalize` first to generate the Alloy model.
 ```
 
@@ -101,7 +105,6 @@ Alloy 形式検証
 ```
 
 検証実行後、出力をコピーしてこのチャットに貼り付けてください。
-
 ```
 
 ### Step 3: Parse Verification Output
@@ -110,11 +113,11 @@ When user provides the verification output, parse it to extract results:
 
 1. **Identify each property checked**
    - Look for `[Check N: PropertyName]` patterns
-   
+
 2. **Extract results**
    - `✅ PASS (反例なし)` → Property passed
    - `❌ FAIL (反例発見)` → Property failed
-   
+
 3. **Capture counterexample details** (for failures)
    - Extract relevant details from output
 
@@ -133,6 +136,7 @@ Change status indicators:
 - Add notes about counterexamples (if any)
 
 Example:
+
 ```markdown
 ### 1. NoDoublePurchase
 - **Type**: Safety Property
@@ -145,7 +149,7 @@ Example:
 - **Notes**: No counterexample found within scope
 
 ### 2. InventoryConsistency
-- **Type**: Safety Property  
+- **Type**: Safety Property
 - **Description**: Product stock never goes negative
 - **Command**: `check InventoryConsistency for 5`
 - **Status**: ❌ FAIL
@@ -183,15 +187,13 @@ Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`:
 ### Docker Output
 
 ```
-
 [Include relevant portions of Docker verification output]
-
 ```
 
 ### Failed Properties Detail
 
 #### InventoryConsistency
-**Counterexample observed**: 
+**Counterexample observed**:
 Two users simultaneously purchasing the last item in stock resulted in stock = -1
 
 **Analysis**:
@@ -220,8 +222,8 @@ For each failed property, provide analysis and suggestions:
 ```alloy
 fact AtomicStockOperations {
     // Ensure stock updates are atomic
-    no disj p1, p2: Purchase | 
-        p1.product = p2.product and 
+    no disj p1, p2: Purchase |
+        p1.product = p2.product and
         p1.timestamp = p2.timestamp
 }
 ```
@@ -233,7 +235,7 @@ pred purchase[u: User, p: Product] {
     // Existing preconditions
     u.balance >= p.price
     p.stock > 0  // Ensure stock check happens atomically
-    
+
     // Add: no other pending purchase for this product
     no other: Purchase | other.product = p and other.status = Pending
 }
@@ -253,7 +255,6 @@ Would you like me to:
 1. Update the Alloy model with the suggested fix
 2. Suggest changes to spec.md
 3. Generate additional test scenarios
-
 ```
 
 ### Step 7: Summary Report
@@ -302,8 +303,8 @@ Provide a clear summary:
 ```
 Excellent! All properties verified successfully via Docker CLI. ✓
 
-This means the formal model satisfies all specified properties within 
-the checked scope (for [SCOPE]). 
+This means the formal model satisfies all specified properties within
+the checked scope (for [SCOPE]).
 
 Consider:
 - Increasing scope (--scope 7) for more thorough verification
@@ -386,7 +387,7 @@ Solution: Start Docker Desktop (macOS) or Docker daemon (Linux/WSL)
 ```
 Error: Permission denied
 
-Solution: 
+Solution:
 - macOS/Linux: Ensure user is in docker group
 - WSL: Restart Docker Desktop
 ```
@@ -396,7 +397,7 @@ Solution:
 ```
 Error: Failed to build Alloy image
 
-Solution: 
+Solution:
 1. Check internet connection (downloads Alloy JAR)
 2. Verify Dockerfile is present in docker/alloy/ directory
 3. Try manual build: docker-compose build alloy-verify
