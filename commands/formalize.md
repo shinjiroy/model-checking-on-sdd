@@ -267,9 +267,3 @@ I need clarification to create an accurate formal specification:
 These details are needed to properly model the system in Alloy.
 Would you like to update spec.md first, or shall I make reasonable assumptions?
 ```
-
-## Templates Reference
-
-- Alloy model structure: `.specify/templates/formal-model-template.als`
-- Properties document: `.specify/templates/formal-properties-template.md`
-- Team guide: `.specify/templates/formal-guide-template.md`
