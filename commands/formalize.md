@@ -14,16 +14,6 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
-## Tool: Alloy Analyzer
-
-We use **Alloy** exclusively for formal verification because:
-
-- Excellent for web application domains (users, products, transactions, relationships)
-- Structural constraints and relational properties
-- Visual feedback through instance graphs in Alloy Analyzer
-- Easier learning curve compared to other formal methods
-- First-order logic + relational logic aligns with database/entity modeling
-
 ## Single Model Principle
 
 Create **exactly one** Alloy model file per specification:

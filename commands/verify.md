@@ -10,15 +10,6 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
-## Tool: Alloy Analyzer (Docker CLI Mode)
-
-This command uses Alloy Analyzer in CLI mode via Docker. This provides:
-
-- Automated verification without GUI
-- Consistent environment across team (macOS, WSL, Linux)
-- Easy integration into development workflows
-- Claude Code-friendly text output
-
 ## Context Files
 
 - Alloy Model: `specs/[FEATURE_NAME]/formal/[feature].als`
