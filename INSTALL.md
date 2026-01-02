@@ -179,22 +179,22 @@ docker-compose build alloy-verify
 **期待される出力:**
 
 ```text
-Alloy モデル検査ツール (Docker版)
+Alloy Model Checking Tool (Docker version)
 
-使い方:
+Usage:
   ./verify.sh <alloy-file> [options]
 
-引数:
-  alloy-file       検証する.alsファイルのパス
-                   (例: specs/001-purchase/formal/purchase.als)
+Arguments:
+  alloy-file       Path to .als file to verify
+                   (e.g., specs/001-purchase/formal/purchase.als)
 
-オプション:
-  --scope N        検証スコープ (デフォルト: 5)
-  --timeout N      タイムアウト秒数 (デフォルト: 300)
-  --format FORMAT  出力形式: text, xml (デフォルト: text)
-  --build          Dockerイメージを再ビルド
-  --shell          Alloy環境のシェルを起動
-  --help           このヘルプを表示
+Options:
+  --scope N        Verification scope (default: 5)
+  --timeout N      Timeout in seconds (default: 300)
+  --format FORMAT  Output format: text, xml (default: text)
+  --build          Rebuild Docker image
+  --shell          Start Alloy environment shell
+  --help           Show this help
 ...
 ```
 

@@ -50,52 +50,52 @@ Please ensure .specify/scripts/bash/verify.sh and docker-compose.yaml exist.
 Instruct user to run verification using Docker:
 
 ```markdown
-## Docker経由でAlloyモデル検査を実行
+## Run Alloy Model Checking via Docker
 
-**プロジェクトルートで以下のコマンドを実行してください:**
+**Run the following command from the project root:**
 
 ```bash
 .specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als
 ```
 
-**オプション:**
+**Options:**
 
-- スコープを変更: `.specify/scripts/bash/verify.sh ... --scope 7`
-- タイムアウト変更: `.specify/scripts/bash/verify.sh ... --timeout 600`
-- イメージ再ビルド: `.specify/scripts/bash/verify.sh ... --build`
+- Change scope: `.specify/scripts/bash/verify.sh ... --scope 7`
+- Change timeout: `.specify/scripts/bash/verify.sh ... --timeout 600`
+- Rebuild image: `.specify/scripts/bash/verify.sh ... --build`
 
-**検証が完了すると、以下のような出力が表示されます:**
+**After verification completes, you will see output like:**
 
 ```
 ================================================
-Alloy モデル検査
+Alloy Model Checking
 ================================================
-ファイル: /specs/[feature].als
-スコープ: 5
-タイムアウト: 300秒
-出力形式: text
+File: /specs/[feature].als
+Scope: 5
+Timeout: 300s
+Output format: text
 ================================================
 
-検証開始...
+Starting verification...
 
 [Check 1: PropertyName1]
-  結果: ✅ PASS (反例なし)
-  詳細: 指定されたスコープ内でプロパティが成立
+  Result: ✅ PASS (no counterexample)
+  Details: Property holds within specified scope
 
 [Check 2: PropertyName2]
-  結果: ❌ FAIL (反例発見)
-  詳細: [反例の詳細]
+  Result: ❌ FAIL (counterexample found)
+  Details: [counterexample details]
 
 [Check 3: PropertyName3]
-  結果: ✅ PASS (反例なし)
-  詳細: 指定されたスコープ内でプロパティが成立
+  Result: ✅ PASS (no counterexample)
+  Details: Property holds within specified scope
 
 ================================================
-検証完了: 3 個のプロパティをチェックしました
+Verification complete: 3 properties checked
 ================================================
 ```
 
-検証実行後、出力をコピーしてこのチャットに貼り付けてください。
+After running verification, copy the output and paste it into this chat.
 ```
 
 ### Step 3: Parse Verification Output
@@ -106,8 +106,8 @@ When user provides the verification output, parse it to extract results:
    - Look for `[Check N: PropertyName]` patterns
 
 2. **Extract results**
-   - `✅ PASS (反例なし)` → Property passed
-   - `❌ FAIL (反例発見)` → Property failed
+   - `✅ PASS (no counterexample)` → Property passed
+   - `❌ FAIL (counterexample found)` → Property failed
 
 3. **Capture counterexample details** (for failures)
    - Extract relevant details from output
