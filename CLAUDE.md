@@ -12,7 +12,7 @@ Spec Kit（仕様駆動開発フレームワーク）に Alloy を使ったモ�
 
 ```bash
 # Dockerイメージのビルド（初回のみ）
-docker-compose build alloy-verify
+docker compose build alloy-verify
 
 # 検証実行
 .specify/scripts/bash/verify.sh specs/{FEATURE_NAME}/formal/{feature}.als

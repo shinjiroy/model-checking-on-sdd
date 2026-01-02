@@ -66,7 +66,7 @@ cp /path/to/model-checking-on-sdd/verify.sh ./
 chmod +x verify.sh
 
 # Dockerイメージをビルド
-docker-compose build alloy-verify
+docker compose build alloy-verify
 ```
 
 ### 動作確認

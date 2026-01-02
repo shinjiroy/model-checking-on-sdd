@@ -2,7 +2,7 @@
 #
 # デフォルト配置: docker/alloy/
 # カスタマイズ: ALLOY_DOCKER_DIR 環境変数で変更可能
-#   例: ALLOY_DOCKER_DIR=.specify/docker/alloy docker-compose build
+#   例: ALLOY_DOCKER_DIR=.specify/docker/alloy docker compose build
 
 services:
   # Alloy検証サービス

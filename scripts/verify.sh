@@ -81,7 +81,7 @@ EOF
 # Build Docker image
 build_image() {
     echo -e "${YELLOW}Building Docker image...${NC}"
-    docker-compose build alloy-verify
+    docker compose build alloy-verify
     echo -e "${GREEN}Build complete${NC}"
 }
 
@@ -89,7 +89,7 @@ build_image() {
 start_shell() {
     echo -e "${YELLOW}Starting Alloy environment shell...${NC}"
     echo "Type 'exit' to quit"
-    docker-compose run --rm alloy-shell
+    docker compose run --rm alloy-shell
 }
 
 # Default values
@@ -155,7 +155,7 @@ if [[ "$BUILD" == true ]]; then
 fi
 
 # Check if Docker image exists
-if ! docker-compose images alloy-verify | grep -q alloy-verify; then
+if ! docker compose images alloy-verify | grep -q alloy-verify; then
     echo -e "${YELLOW}Docker image not found. Building...${NC}"
     build_image
 fi
@@ -167,7 +167,7 @@ echo ""
 # Run verification via Docker
 # Convert to relative path under specs/
 REL_PATH="${ALS_FILE#specs/}"
-docker-compose run --rm alloy-verify "/specs/$REL_PATH" $VERIFY_ARGS
+docker compose run --rm alloy-verify "/specs/$REL_PATH" $VERIFY_ARGS
 
 EXIT_CODE=$?
 
