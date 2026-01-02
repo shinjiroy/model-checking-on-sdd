@@ -93,30 +93,40 @@ Properties about the system's structure and relationships:
 
 ## Verification Instructions
 
-To verify these properties:
+### Recommended: Docker CLI (automatic)
 
-1. **Open Alloy Analyzer**
-   - Download from: https://alloytools.org/download.html
-   - Launch the application
+Run `/speckit.modelcheck.verify` command. This will:
+
+1. Automatically execute verification via Docker
+2. Parse results and interpret pass/fail status
+3. Update this document with results (status, date, scope)
+4. Append session details to `verification-log.md`
+5. Suggest fixes for any failed properties
+
+**Scope override**: `/speckit.modelcheck.verify scope 7`
+
+### Interpret Results
+
+- **✅ PASS** = Property holds within the checked scope (no counterexample found)
+- **❌ FAIL** = Property violated (counterexample found in output)
+
+### Optional: Alloy Analyzer GUI (for debugging)
+
+If you need to visually inspect counterexamples or explore the model interactively:
+
+1. **Download Alloy Analyzer**
+   - https://alloytools.org/download.html
 
 2. **Load the Model**
-   - File → Open
-   - Select: `specs/[FEATURE_NAME]/formal/[feature].als`
+   - File → Open → Select `[feature].als`
 
-3. **Execute Each Check Command**
-   - Find the verification command for each property (listed above)
-   - Click "Execute" next to the command in Alloy Analyzer
-   - Wait for analysis to complete
+3. **Execute Check Commands**
+   - Click "Execute" next to the check command
+   - Green checkmark = PASS, Red X = FAIL
 
-4. **Interpret Results**
-   - **Green checkmark** = Property PASSED
-   - **Red X** = Property FAILED (counterexample shown)
-
-5. **Update This Document**
-   - Change status from ⬜ to ✅ or ❌
-   - Add verification date
-   - Add scope used
-   - Add notes about counterexamples if failed
+4. **Inspect Counterexamples**
+   - Use the graph visualization to understand failures
+   - Navigate through atoms and relations
 
 ---
 
@@ -137,7 +147,8 @@ To verify these properties:
 If a property fails (❌):
 
 1. **Examine Counterexample**
-   - Alloy Analyzer shows a graph of the counterexample
+   - Review the counterexample details in verification output
+   - For visual inspection, use Alloy Analyzer GUI (see Optional section above)
    - Understand what scenario violates the property
 
 2. **Determine Root Cause**
@@ -147,8 +158,8 @@ If a property fails (❌):
 
 3. **Take Action**
    - Update model or specification as needed
-   - Re-run verification
-   - Document the fix in `verification-log.md`
+   - Re-run `/speckit.modelcheck.verify`
+   - Results are automatically documented in `verification-log.md`
 
 4. **Mark for Re-verification**
    - Change status to 🔄 after any model changes
