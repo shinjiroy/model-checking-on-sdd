@@ -9,6 +9,10 @@ $ARGUMENTS
 ```
 
 You **MUST** consider the user input before proceeding (if not empty).
+User input may specify:
+- Feature name or path to .als file
+- Scope override (e.g., "scope 7")
+- Other verification options
 
 ## Context Files
 
@@ -19,106 +23,74 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-### Step 1: Check Prerequisites
+### Step 1: Locate Alloy Model
 
-Verify that required files exist:
+Find the Alloy model file to verify:
 
-```
-Required files:
-✓ specs/[FEATURE_NAME]/formal/[feature].als
-✓ specs/[FEATURE_NAME]/formal/properties.md
-✓ .specify/scripts/bash/verify.sh (Docker verification script)
-✓ docker-compose.yaml
-```
+1. If user specified a path in input, use that
+2. Otherwise, search for `.als` files in `specs/[FEATURE_NAME]/formal/`
+3. If multiple models found, ask user which one to verify
 
-If missing model, inform user:
+If no model found:
 
 ```
 Error: Alloy model not found.
 Please run `/speckit.modelcheck.formalize` first to generate the Alloy model.
 ```
 
+### Step 2: Check Prerequisites
+
+Verify that required files exist:
+
+- `.specify/scripts/bash/verify.sh` or project root `verify.sh`
+- `docker-compose.yaml` or `docker-compose.yml`
+
 If missing Docker setup:
 
 ```
 Error: Docker verification setup not found.
-Please ensure .specify/scripts/bash/verify.sh and docker-compose.yaml exist.
+Please ensure verify.sh and docker-compose.yaml exist.
 ```
 
-### Step 2: Execute Verification via Docker CLI
+### Step 3: Execute Verification
 
-Instruct user to run verification using Docker:
-
-```markdown
-## Run Alloy Model Checking via Docker
-
-**Run the following command from the project root:**
+**Use the Bash tool** to run verification automatically:
 
 ```bash
-.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als
+.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als --scope [SCOPE]
 ```
 
-**Options:**
+Default scope is 5. Use scope from user input if specified.
 
-- Change scope: `.specify/scripts/bash/verify.sh ... --scope 7`
-- Change timeout: `.specify/scripts/bash/verify.sh ... --timeout 600`
-- Rebuild image: `.specify/scripts/bash/verify.sh ... --build`
+If the script is at project root instead:
 
-**After verification completes, you will see output like:**
-
-```
-================================================
-Alloy Model Checking
-================================================
-File: /specs/[feature].als
-Scope: 5
-Timeout: 300s
-Output format: text
-================================================
-
-Starting verification...
-
-[Check 1: PropertyName1]
-  Result: ✅ PASS (no counterexample)
-  Details: Property holds within specified scope
-
-[Check 2: PropertyName2]
-  Result: ❌ FAIL (counterexample found)
-  Details: [counterexample details]
-
-[Check 3: PropertyName3]
-  Result: ✅ PASS (no counterexample)
-  Details: Property holds within specified scope
-
-================================================
-Verification complete: 3 properties checked
-================================================
+```bash
+./verify.sh specs/[FEATURE_NAME]/formal/[feature].als --scope [SCOPE]
 ```
 
-After running verification, copy the output and paste it into this chat.
-```
+**Important**: Run this command and capture the output. Do NOT ask the user to run it manually.
 
-### Step 3: Parse Verification Output
+### Step 4: Parse Verification Output
 
-When user provides the verification output, parse it to extract results:
+From the verification output, extract:
 
-1. **Identify each property checked**
+1. **Each property checked**
    - Look for `[Check N: PropertyName]` patterns
 
-2. **Extract results**
+2. **Results**
    - `✅ PASS (no counterexample)` → Property passed
    - `❌ FAIL (counterexample found)` → Property failed
 
-3. **Capture counterexample details** (for failures)
+3. **Counterexample details** (for failures)
    - Extract relevant details from output
 
 4. **Summary**
    - Total properties checked
    - Pass/fail count
 
-### Step 4: Update Properties Document
+### Step 5: Update Properties Document
 
-Based on parsed output, update `specs/[FEATURE_NAME]/formal/properties.md`:
+Based on verification results, update `specs/[FEATURE_NAME]/formal/properties.md`:
 
 Change status indicators:
 - `⬜ Not verified` → `✅ PASS` or `❌ FAIL`
@@ -126,7 +98,7 @@ Change status indicators:
 - Add scope used
 - Add notes about counterexamples (if any)
 
-Example:
+Example update:
 
 ```markdown
 ### 1. NoDoublePurchase
@@ -136,34 +108,29 @@ Example:
 - **Status**: ✅ PASS
 - **Last Verified**: [DATE]
 - **Scope**: for 5
-- **Verified via**: Docker CLI
+- **Verified via**: Docker CLI (automatic)
 - **Notes**: No counterexample found within scope
-
-### 2. InventoryConsistency
-- **Type**: Safety Property
-- **Description**: Product stock never goes negative
-- **Command**: `check InventoryConsistency for 5`
-- **Status**: ❌ FAIL
-- **Last Verified**: [DATE]
-- **Scope**: for 5
-- **Verified via**: Docker CLI
-- **Counterexample**: Found scenario where concurrent purchases reduce stock below zero
-- **Action Required**: Add synchronization constraints or stock check
 ```
 
-### Step 5: Update Verification Log
+### Step 6: Update Verification Log
 
-Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`:
+Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`.
+
+**First, check the previous verification session** in the log file to compare results.
+
+#### Case A: Results differ from previous session (or first run)
+
+Append a full session entry:
 
 ```markdown
 ---
 ## Verification Session: [TIMESTAMP]
 
-**Verifier**: [USER_NAME or "Team Member"]
+**Verifier**: Claude Code (automatic)
 **Model Version**: [GIT_COMMIT or DATE]
 **Alloy Version**: 6.1.0 (Docker CLI)
 **Scope Used**: for [SCOPE_NUMBER]
-**Execution Method**: Docker CLI (`verify.sh`)
+**Execution Method**: Docker CLI (automatic via /speckit.modelcheck.verify)
 
 ### Results Summary
 
@@ -175,80 +142,71 @@ Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`:
 
 **Overall**: [X]/[Y] properties verified successfully
 
-### Docker Output
+### Verification Output
 
-```
-[Include relevant portions of Docker verification output]
+```text
+[Include the actual Docker verification output]
 ```
 
 ### Failed Properties Detail
 
-#### InventoryConsistency
+#### [FailedPropertyName]
 **Counterexample observed**:
-Two users simultaneously purchasing the last item in stock resulted in stock = -1
+[Description from output]
 
 **Analysis**:
 [Analyze based on output details]
 
 ### Actions Required
-- [ ] Fix: Add fact to ensure atomic stock operations
-- [ ] Fix: Add precondition check: p.stock > 0 before purchase
-- [ ] Re-verify after model update
+- [ ] [Action items based on failures]
 ```
 
-### Step 6: Analyze Failures and Suggest Fixes
+#### Case B: Results identical to previous session
+
+Append a brief entry only:
+
+```markdown
+---
+## Verification Session: [TIMESTAMP]
+
+**Scope Used**: for [SCOPE_NUMBER]
+**Result**: No change from previous session ([X]/[Y] properties passed)
+```
+
+### Step 7: Analyze Failures and Suggest Fixes
 
 For each failed property, provide analysis and suggestions:
 
 ```markdown
 ## Analysis of Failures
 
-### InventoryConsistency Failed
+### [PropertyName] Failed
 
-**Root cause**: The model allows concurrent operations without proper synchronization.
+**Root cause**: [Analysis of why it failed]
 
 **Suggested fixes**:
 
 **Option A: Add constraint to the model**
 ```alloy
-fact AtomicStockOperations {
-    // Ensure stock updates are atomic
-    no disj p1, p2: Purchase |
-        p1.product = p2.product and
-        p1.timestamp = p2.timestamp
+fact [ConstraintName] {
+    // Fix suggestion
 }
 ```
 
 **Option B: Strengthen preconditions**
-
 ```alloy
-pred purchase[u: User, p: Product] {
-    // Existing preconditions
-    u.balance >= p.price
-    p.stock > 0  // Ensure stock check happens atomically
-
-    // Add: no other pending purchase for this product
-    no other: Purchase | other.product = p and other.status = Pending
+pred [operationName][...] {
+    // Updated preconditions
 }
 ```
 
 **Option C: Refine spec.md**
-If the counterexample reveals a genuine business logic gap, update `spec.md` to clarify:
+If the counterexample reveals a genuine business logic gap, update `spec.md` to clarify the requirements.
 
-- How concurrent purchases should be handled
-- Whether optimistic or pessimistic locking is used
-- Stock reservation mechanism
-
-**Recommendation**: Start with Option B (strengthen preconditions) as it's most practical.
-
-Would you like me to:
-
-1. Update the Alloy model with the suggested fix
-2. Suggest changes to spec.md
-3. Generate additional test scenarios
+**Recommendation**: [Which option to start with]
 ```
 
-### Step 7: Summary Report
+### Step 8: Summary Report
 
 Provide a clear summary:
 
@@ -257,29 +215,31 @@ Provide a clear summary:
 
 **Feature**: [FEATURE_NAME]
 **Date**: [DATE]
-**Method**: Docker CLI
+**Method**: Docker CLI (automatic)
 **Results**: [X]/[Y] properties verified
 
 ### Status
-✅ Passed: NoDoublePurchase, BalanceIntegrity
-❌ Failed: InventoryConsistency
+✅ Passed: [list of passed properties]
+❌ Failed: [list of failed properties] (if any)
 
-### Next Steps
-
-**Immediate actions**:
-1. Review counterexample for InventoryConsistency
-2. Choose a fix strategy (model update or spec clarification)
-3. Re-run verification after fixes: `.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als`
-
-**Documentation updated**:
+### Documentation Updated
 - ✓ `formal/properties.md` - Status updated with verification results
 - ✓ `formal/verification-log.md` - Session recorded with details
+
+### Next Steps
+[If all passed]:
+- Consider increasing scope for more thorough verification
+- Proceed to `/speckit.tasks` for implementation
+
+[If some failed]:
+1. Review the counterexamples above
+2. Choose a fix strategy (model update or spec clarification)
+3. Apply fixes and re-run `/speckit.modelcheck.verify`
 
 **Would you like me to**:
 - Apply suggested fixes to the Alloy model
 - Help interpret the counterexample details
-- Update spec.md to address the issues found
-- Increase verification scope for more thorough checking
+- Increase verification scope and re-verify
 ```
 
 ## Output Files Modified
@@ -289,5 +249,7 @@ Provide a clear summary:
 
 ## Important Notes
 
-- **Scope sensitivity**: Results depend on scope (for N) - larger scopes take longer
-- **Counterexamples are valuable**: Failures reveal important edge cases
+- **Automatic execution**: This command runs verify.sh automatically - no manual steps required
+- **Scope sensitivity**: Results depend on scope (for N) - larger scopes take longer but are more thorough
+- **Counterexamples are valuable**: Failures reveal important edge cases before implementation
+- **Re-run after fixes**: After modifying the model, run this command again to verify fixes

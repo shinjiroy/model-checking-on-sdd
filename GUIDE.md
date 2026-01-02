@@ -236,9 +236,8 @@ specs/{FEATURE_NAME}/
 
    もし必要なら:
    4a. /speckit.modelcheck.formalize → Alloyモデルを生成
-   4b. [CLI検証] → verify.shを実行
-   4c. /speckit.modelcheck.verify   → 検証結果を文書化
-   4d. [反復] 修正       → 失敗があれば、修正して再検証
+   4b. /speckit.modelcheck.verify   → 検証実行＆結果文書化（自動）
+   4c. [反復] 修正       → 失敗があれば、修正して再検証
 
    もし不要なら:
    4. [モデル検査をスキップ]
@@ -254,22 +253,22 @@ specs/{FEATURE_NAME}/
 ```
 反復1:
 - /speckit.modelcheck.formalize → 初期モデルを生成
-- スコープ3で検証   → 高速チェック
-- ❌ 失敗発見       → 反例をレビュー
-- モデルを修正      → .alsファイルを更新
-- 再検証            → 再度チェック
+- /speckit.modelcheck.verify    → 自動検証（スコープ3）
+- ❌ 失敗発見                   → 反例をレビュー
+- モデルを修正                  → .alsファイルを更新
+- /speckit.modelcheck.verify    → 再検証
 
 反復2:
 - ✅ スコープ3ですべて合格
-- スコープ5で検証   → より徹底的
-- ❌ 新しい失敗     → エッジケース発見
-- spec.mdを更新    → 要件を明確化
-- /speckit.modelcheck.formalize → モデルを再生成
-- 再検証            → 再度チェック
+- /speckit.modelcheck.verify scope 5 → より徹底的に検証
+- ❌ 新しい失敗                      → エッジケース発見
+- spec.mdを更新                     → 要件を明確化
+- /speckit.modelcheck.formalize     → モデルを再生成
+- /speckit.modelcheck.verify        → 再検証
 
 反復3:
 - ✅ スコープ5ですべて合格
-- /speckit.modelcheck.verify   → 結果を文書化
+- 結果は自動で文書化済み
 - /speckit.tasksへ進む
 ```
 
@@ -317,7 +316,7 @@ specs/{FEATURE_NAME}/
 
 ### `/speckit.modelcheck.verify`
 
-**目的**: モデル検査結果を文書化
+**目的**: Alloyモデルの検証を実行し、結果を文書化
 
 **使い方**:
 
@@ -327,37 +326,37 @@ specs/{FEATURE_NAME}/
 
 **実行内容**:
 
-1. ユーザーにverify.sh検証を案内
-2. ユーザーから検証結果を収集
-3. `formal/properties.md`を合格/不合格ステータスで更新
-4. `formal/verification-log.md`にセッション詳細を追記
-5. 失敗したプロパティに対する修正案を提案
+1. Alloyモデル(`.als`ファイル)を自動検出
+2. verify.shを**自動実行**してDocker経由で検証
+3. 検証出力を解析（合格/不合格、反例など）
+4. `formal/properties.md`を合格/不合格ステータスで更新
+5. `formal/verification-log.md`にセッション詳細を追記
+6. 失敗したプロパティに対する修正案を提案
 
 **前提条件**:
 
 - `formal/{feature}.als`が存在する(`/speckit.modelcheck.formalize`を先に実行)
+- Docker環境が起動済み
 - verify.shが実行可能な状態
-- ユーザーがverify.shで検証を実行済み
 
 **ワークフロー**:
 
-1. コマンドがユーザーにverify.shを実行するよう促す
-2. ユーザーがverify.shで検証を実行
-3. ユーザーが結果をコマンドに報告
-4. コマンドがすべてを文書化
-5. コマンドが失敗に対する修正を提案
+1. コマンドがAlloyモデルを自動検出
+2. コマンドがverify.shを**自動実行**（手動実行不要）
+3. 出力を解析して結果を抽出
+4. properties.md、verification-log.mdを更新
+5. 失敗に対する修正を提案
 
 **使用タイミング**:
 
-- verify.shで検証を実行した後
-- 検証結果を文書化するため
-- 失敗を修正するための提案を得るため
+- `/speckit.modelcheck.formalize`でモデル生成した後
+- モデル修正後の再検証時
 - チームに検証ステータスを更新するため
 
 **ヒント**:
 
-- コマンドに文書化を依頼する前に検証を実行
-- プロパティが失敗した場合は反例の説明を用意
+- スコープ指定: `/speckit.modelcheck.verify scope 7` のように入力
+- 失敗した場合は反例を分析し、モデルを修正して再実行
 - 各検証反復後にこれを使用
 
 ---
@@ -939,11 +938,10 @@ check NoUnauthorizedAccess for 5
 
 コマンド:
   /speckit.modelcheck.formalize → Alloyモデルを生成
-  verify.sh → 検証を実行
-  /speckit.modelcheck.verify → 結果を文書化
+  /speckit.modelcheck.verify    → 検証実行＆結果文書化（自動）
 
 ワークフロー:
-  specify → plan → modelcheck.formalize → verify (反復) → tasks → implement
+  specify → plan → modelcheck.formalize → modelcheck.verify (反復) → tasks → implement
 
 ファイル:
   formal/{feature}.als → specごとに単一モデル
@@ -958,7 +956,7 @@ check NoUnauthorizedAccess for 5
 覚えておくこと:
   失敗 = 成功 (早期発見!)
   反復 = 通常 (一発ではない)
-  文書化 = 必須 (チームと将来のため)
+  文書化 = 自動 (verify実行時に更新)
 ```
 
 ## FAQ

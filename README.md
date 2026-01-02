@@ -85,12 +85,14 @@ docker compose build alloy-verify
 /speckit.specify                                    # 仕様作成
 /speckit.plan                                       # 技術設計
 /speckit.modelcheck.formalize                       # Alloyモデル生成
-./verify.sh specs/001-purchase/formal/purchase.als # Docker CLI検証
-/speckit.modelcheck.verify                          # 結果文書化
+/speckit.modelcheck.verify                          # 検証実行＆結果文書化（自動）
 /speckit.tasks                                      # タスク作成
 ```
 
-### 検証実行例
+### 検証実行例（手動実行する場合）
+
+> **Note**: `/speckit.modelcheck.verify`コマンドが自動で検証を実行するため、
+> 通常は手動実行は不要です。以下は直接実行する場合の例です。
 
 ```bash
 # 基本
