@@ -38,12 +38,10 @@ Spec KitワークフローにAlloyを使った形式検証を追加します。�
 
 ### 前提条件
 
-1. **Spec Kitがインストール済み**
+1. **Spec Kitがリポジトリに導入済み**
 2. **Docker環境**
    - macOS: Docker Desktop
    - Linux/WSL: Docker Engine
-
-Note: Javaは不要です。
 
 ### インストール
 

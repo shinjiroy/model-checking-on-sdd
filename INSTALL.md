@@ -35,14 +35,9 @@
    # 出力例: Docker version 24.0.0, build xxxxx
    
    # Docker Composeバージョン確認
-   docker-compose --version
+   docker compose --version
    # 出力例: Docker Compose version v2.20.0
    ```
-
-### 不要なもの
-
-- ❌ Java (Docker内で実行されるため不要)
-- ❌ Alloy Analyzer GUI (CLI版を使用)
 
 ---
 
@@ -145,7 +140,7 @@ cp .env.example .env
 
 ```bash
 # プロジェクトルートで実行
-docker-compose build alloy-verify
+docker compose build alloy-verify
 ```
 
 **ビルド中の出力例:**
@@ -316,7 +311,7 @@ cp ${FORMAL_PKG}/templates/modelcheck-* .specify/templates/
 ### Dockerイメージのビルドでファイルが見つからない
 
 ```bash
-docker-compose build alloy-verify
+docker compose build alloy-verify
 # COPY failed: file not found in build context
 ```
 
@@ -333,7 +328,7 @@ cp -r ${FORMAL_PKG}/docker/* docker/alloy/
 
 ```bash
 export ALLOY_DOCKER_DIR=<配置先パス>
-docker-compose build alloy-verify
+docker compose build alloy-verify
 ```
 
 ---
@@ -405,7 +400,7 @@ rm .specify/docs/GUIDE.md
 # rm docker-compose.yml
 
 # Dockerイメージを削除
-docker-compose down
+docker compose down
 docker rmi model-checking-on-sdd_alloy-verify
 
 # 生成されたモデルを削除(オプショナル)
@@ -444,10 +439,10 @@ A: 可能ですが、今回のスコープ外です。GitHub Actions等でdocker
 
    ```bash
    # Docker ログ
-   docker-compose logs alloy-verify
+   docker compose logs alloy-verify
    
    # ビルドログ
-   docker-compose build --progress=plain alloy-verify
+   docker compose build --progress=plain alloy-verify
    ```
 
 2. **デバッグモード**
