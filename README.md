@@ -18,8 +18,8 @@ Spec KitワークフローにAlloyを使った形式検証を追加します。�
 
 ### 含まれるもの
 
-- **2つの新規コマンド**: `/speckit.formalize`, `/speckit.verify`
-- **4つのテンプレート**: モデルテンプレート、プロパティテンプレート、ガイドテンプレート、ログテンプレート
+- **2つの新規コマンド**: `/speckit.modelcheck.formalize`, `/speckit.modelcheck.verify`
+- **3つのテンプレート**: モデルテンプレート、プロパティテンプレート、ログテンプレート
 - **Docker環境**: Alloy CLI実行用のDockerfile、docker-compose.yml、検証スクリプト
 - **完全なドキュメント**: ガイド、ベストプラクティス、例
 
@@ -59,7 +59,7 @@ cp -r /path/to/model-checking-on-sdd/templates/* .specify/templates/
 
 # ドキュメントをコピー
 mkdir -p .specify/docs
-cp /path/to/model-checking-on-sdd/docs/FORMAL_METHODS_GUIDE.md .specify/docs/
+cp /path/to/model-checking-on-sdd/GUIDE.md .specify/docs/
 
 # Docker環境をコピー
 cp -r /path/to/model-checking-on-sdd/docker ./
@@ -86,9 +86,9 @@ docker-compose build alloy-verify
 ```bash
 /speckit.specify                                    # 仕様作成
 /speckit.plan                                       # 技術設計
-/speckit.formalize                                  # Alloyモデル生成
+/speckit.modelcheck.formalize                       # Alloyモデル生成
 ./verify.sh specs/001-purchase/formal/purchase.als # Docker CLI検証
-/speckit.verify                                     # 結果文書化
+/speckit.modelcheck.verify                          # 結果文書化
 /speckit.tasks                                      # タスク作成
 ```
 
@@ -112,16 +112,14 @@ docker-compose build alloy-verify
 ```bash
 model-checking-on-sdd/
 ├── commands/              # Spec Kitコマンド
-│   ├── formalize.md
-│   └── verify.md         # Docker対応
+│   ├── speckit.modelcheck.formalize.md
+│   └── speckit.modelcheck.verify.md
 ├── templates/             # テンプレート
-│   ├── formal-model-template.als
-│   ├── formal-properties-template.md
-│   └── formal-verification-log-template.md
-├── docs/                  # ドキュメント
-│   ├── README.md      # このファイル
-│   ├── FORMAL_METHODS_GUIDE.md
-│   └── INSTALL.md
+│   ├── modelcheck-model-template.als
+│   ├── modelcheck-properties-template.md
+│   └── modelcheck-verification-log-template.md
+├── GUIDE.md               # モデル検査ガイド
+├── INSTALL.md             # インストール手順
 ├── docker/                # Docker環境
 │   ├── Dockerfile
 │   └── verify-alloy.sh
@@ -133,5 +131,5 @@ model-checking-on-sdd/
 
 ## 詳細ドキュメント
 
-- **FORMAL_METHODS_GUIDE.md** - 完全な統合ガイド
+- **GUIDE.md** - 完全なモデル検査ガイド
 - **INSTALL.md** - インストール手順の詳細

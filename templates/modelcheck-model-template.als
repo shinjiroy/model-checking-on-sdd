@@ -1,11 +1,11 @@
 /**
- * [FEATURE_NAME] - Formal Specification
- * 
+ * [FEATURE_NAME] - Alloy Model for Model Checking
+ *
  * Generated from: specs/[FEATURE_NAME]/spec.md
  * Date: [DATE]
  * Purpose: [BRIEF_DESCRIPTION]
- * 
- * This Alloy model formalizes the requirements specified in spec.md.
+ *
+ * This Alloy model represents the requirements specified in spec.md for model checking.
  * It defines the system's structure, constraints, and properties to verify.
  */
 

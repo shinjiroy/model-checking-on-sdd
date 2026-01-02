@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document tracks the formal properties verified for [FEATURE_NAME]. Each property represents a guarantee about the system's behavior that has been formally specified and checked using Alloy Analyzer.
+This document tracks the properties verified for [FEATURE_NAME]. Each property represents a guarantee about the system's behavior that has been specified and checked using Alloy.
 
 ## Verification Status Legend
 

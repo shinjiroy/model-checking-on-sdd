@@ -1,8 +1,8 @@
 ---
-description: Generate Alloy formal specification from natural language spec. (project)
+description: Generate Alloy model for model checking from natural language spec. (project)
 handoffs:
   - label: Run Verification
-    agent: speckit.verify
+    agent: speckit.modelcheck.verify
     prompt: Verify the generated Alloy model
 ---
 
@@ -72,13 +72,13 @@ specs/[FEATURE_NAME]/formal/
 
 ### Step 4: Generate Alloy Model
 
-Create `specs/[FEATURE_NAME]/formal/[feature].als` using the template at `.specify/templates/formal-model-template.als`.
+Create `specs/[FEATURE_NAME]/formal/[feature].als` using the template at `.specify/templates/modelcheck-model-template.als`.
 
 **Structure of the model**:
 
 ```alloy
 /**
- * [FEATURE_NAME] - Formal Specification
+ * [FEATURE_NAME] - Alloy Model for Model Checking
  *
  * Generated from: specs/[FEATURE_NAME]/spec.md
  * Date: [DATE]
@@ -188,7 +188,7 @@ check InventoryConsistency for 5
 
 Create `specs/[FEATURE_NAME]/formal/properties.md` listing all properties to verify:
 
-Use template: `.specify/templates/formal-properties-template.md`
+Use template: `.specify/templates/modelcheck-properties-template.md`
 
 Fill in:
 
@@ -202,9 +202,9 @@ Fill in:
 After generating all files, inform the user:
 
 ```markdown
-## Formal Specification Generated ✓
+## Alloy Model Generated ✓
 
-I've created the Alloy formal specification for [FEATURE_NAME]:
+I've created the Alloy model for [FEATURE_NAME]:
 
 **Files created**:
 - `formal/[feature].als` - Alloy model (XX lines)
@@ -213,13 +213,13 @@ I've created the Alloy formal specification for [FEATURE_NAME]:
 **Next steps**:
 1. Review the Alloy model for accuracy
 2. Run verification: `.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als`
-3. Use `/speckit.verify` to document results
+3. Use `/speckit.modelcheck.verify` to document results
 
 **Key properties defined**:
 - [List key assertions from the model]
 
 **Would you like me to**:
-- Explain any part of the formal model
+- Explain any part of the Alloy model
 - Add additional properties to verify
 - Refine the model based on your feedback
 ```
@@ -235,7 +235,7 @@ Generate exactly these files:
 
 - **ONE model file per spec**: Never create multiple `.als` files unless user explicitly requests split
 - **No modification of existing files**: Do not touch spec.md, plan.md, tasks.md
-- **Self-contained formal directory**: Everything for verification lives under `formal/`
+- **Self-contained formal directory**: Everything for model checking lives under `formal/`
 - **Reference but don't duplicate**: Link to spec.md, don't copy its content
 - **Keep it practical**: Focus on verifiable properties, not theoretical perfection
 
@@ -244,12 +244,12 @@ Generate exactly these files:
 If the specification lacks necessary details:
 
 ```
-I need clarification to create an accurate formal specification:
+I need clarification to create an accurate Alloy model:
 
 1. [Specific question about entities/relationships]
 2. [Question about constraints]
 3. [Question about expected behavior]
 
-These details are needed to properly model the system in Alloy.
+These details are needed to properly model the system for model checking in Alloy.
 Would you like to update spec.md first, or shall I make reasonable assumptions?
 ```

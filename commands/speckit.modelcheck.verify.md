@@ -1,5 +1,5 @@
 ---
-description: Execute and document formal verification using Alloy via Docker CLI. (project)
+description: Execute and document model checking verification using Alloy via Docker CLI. (project)
 ---
 
 ## User Input
@@ -34,8 +34,8 @@ Required files:
 If missing model, inform user:
 
 ```
-Error: Formal specification not found.
-Please run `/speckit.formalize` first to generate the Alloy model.
+Error: Alloy model not found.
+Please run `/speckit.modelcheck.formalize` first to generate the Alloy model.
 ```
 
 If missing Docker setup:
@@ -50,7 +50,7 @@ Please ensure .specify/scripts/bash/verify.sh and docker-compose.yaml exist.
 Instruct user to run verification using Docker:
 
 ```markdown
-## Docker経由でAlloy検証を実行
+## Docker経由でAlloyモデル検査を実行
 
 **プロジェクトルートで以下のコマンドを実行してください:**
 
@@ -68,7 +68,7 @@ Instruct user to run verification using Docker:
 
 ```
 ================================================
-Alloy 形式検証
+Alloy モデル検査
 ================================================
 ファイル: /specs/[feature].als
 スコープ: 5

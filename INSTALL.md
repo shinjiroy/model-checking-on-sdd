@@ -1,4 +1,4 @@
-# Spec Kit 形式検証拡張 - インストールガイド
+# Spec Kit モデル検査拡張 - インストールガイド
 
 **対応環境**: macOS, Linux, WSL2
 
@@ -76,7 +76,7 @@ cp -r ${FORMAL_PKG}/commands/* .claude/commands/
 
 # 確認
 ls .claude/commands/
-# 期待される出力: ... formalize.md verify.md ...
+# 期待される出力: ... speckit.modelcheck.formalize.md speckit.modelcheck.verify.md ...
 ```
 
 > **Note**: Cursorなど他のエージェントを使用する場合は、各エージェントのコマンド配置先に合わせてください。
@@ -88,11 +88,11 @@ ls .claude/commands/
 cp -r ${FORMAL_PKG}/templates/* .specify/templates/
 
 # 確認
-ls .specify/templates/ | grep formal
+ls .specify/templates/ | grep modelcheck
 # 期待される出力:
-# formal-model-template.als
-# formal-properties-template.md
-# formal-verification-log-template.md
+# modelcheck-model-template.als
+# modelcheck-properties-template.md
+# modelcheck-verification-log-template.md
 ```
 
 #### 2.3 ドキュメントをコピー
@@ -101,12 +101,12 @@ ls .specify/templates/ | grep formal
 # ドキュメントディレクトリを作成(存在しない場合)
 mkdir -p .specify/docs
 
-# docs/FORMAL_METHODS_GUIDE.md → .specify/docs/
-cp ${FORMAL_PKG}/docs/FORMAL_METHODS_GUIDE.md .specify/docs/
+# GUIDE.md → .specify/docs/
+cp ${FORMAL_PKG}/GUIDE.md .specify/docs/
 
 # 確認
 ls .specify/docs/
-# 期待される出力: ... FORMAL_METHODS_GUIDE.md ...
+# 期待される出力: ... GUIDE.md ...
 ```
 
 #### 2.4 Docker環境をコピー
@@ -179,7 +179,7 @@ docker-compose build alloy-verify
 **期待される出力:**
 
 ```text
-Alloy 形式検証ツール (Docker版)
+Alloy モデル検査ツール (Docker版)
 
 使い方:
   ./verify.sh <alloy-file> [options]
@@ -214,7 +214,7 @@ model-checking-on-sdd_alloy-verify   latest   abc123def456   5 minutes ago   XYZ
 
 ```bash
 # Claude Code、Cursorなどで
-/speckit.formalize
+/speckit.modelcheck.formalize
 ```
 
 **期待される動作:**
@@ -233,8 +233,8 @@ your-project/
 │
 ├── .claude/                                # Claude Code用
 │   └── commands/
-│       ├── formalize.md                   # ✨ 新規
-│       └── verify.md                      # ✨ 新規
+│       ├── speckit.modelcheck.formalize.md   # ✨ 新規
+│       └── speckit.modelcheck.verify.md      # ✨ 新規
 │
 ├── .specify/
 │   ├── memory/
@@ -243,16 +243,16 @@ your-project/
 │   ├── templates/
 │   │   ├── spec-template.md               # 既存
 │   │   ├── plan-template.md               # 既存
-│   │   ├── formal-model-template.als      # ✨ 新規
-│   │   ├── formal-properties-template.md  # ✨ 新規
-│   │   └── formal-verification-log-template.md # ✨ 新規
+│   │   ├── modelcheck-model-template.als      # ✨ 新規
+│   │   ├── modelcheck-properties-template.md  # ✨ 新規
+│   │   └── modelcheck-verification-log-template.md # ✨ 新規
 │   │
 │   ├── scripts/
 │   │   └── bash/
 │   │       └── verify.sh                  # ✨ 新規: 検証スクリプト
 │   │
 │   └── docs/
-│       └── FORMAL_METHODS_GUIDE.md     # ✨ 新規
+│       └── GUIDE.md                       # ✨ 新規
 │
 ├── docker/
 │   └── alloy/                             # ✨ 新規: Alloy Docker環境
@@ -267,7 +267,7 @@ your-project/
 │       ├── spec.md
 │       ├── plan.md
 │       ├── tasks.md
-│       └── formal/                         # /speckit.formalizeで作成
+│       └── formal/                         # /speckit.modelcheck.formalizeで作成
 │           ├── {feature}.als
 │           ├── properties.md
 │           └── verification-log.md
@@ -283,11 +283,11 @@ your-project/
 ### コマンドが認識されない
 
 ```bash
-/speckit.formalize
+/speckit.modelcheck.formalize
 # Error: Command not found
 ```
 
-**確認:** `ls .claude/commands/formalize.md`
+**確認:** `ls .claude/commands/speckit.modelcheck.formalize.md`
 
 **解決策:**
 
@@ -299,16 +299,16 @@ your-project/
 ### テンプレートが見つからない
 
 ```bash
-/speckit.formalize
-# Error: Template not found: formal-model-template.als
+/speckit.modelcheck.formalize
+# Error: Template not found: modelcheck-model-template.als
 ```
 
-**確認:** `ls .specify/templates/formal-*`
+**確認:** `ls .specify/templates/modelcheck-*`
 
 **解決策:** テンプレートを再コピー
 
 ```bash
-cp ${FORMAL_PKG}/templates/formal-* .specify/templates/
+cp ${FORMAL_PKG}/templates/modelcheck-* .specify/templates/
 ```
 
 ---
@@ -360,7 +360,7 @@ chmod +x .specify/scripts/bash/verify.sh
 1. ✅ **ドキュメントを読む**
 
    ```bash
-   cat .specify/docs/FORMAL_METHODS_GUIDE.md
+   cat .specify/docs/GUIDE.md
    ```
 
 2. ✅ **簡単な機能で試す**
@@ -369,35 +369,35 @@ chmod +x .specify/scripts/bash/verify.sh
    # 仕様作成
    /speckit.specify
 
-   # 形式化
-   /speckit.formalize
+   # モデル生成
+   /speckit.modelcheck.formalize
 
    # 検証
    .specify/scripts/bash/verify.sh specs/001-test/formal/test.als
 
    # 結果文書化
-   /speckit.verify
+   /speckit.modelcheck.verify
    ```
 
 ---
 
 ## アンインストール
 
-形式検証拡張を削除する場合:
+モデル検査拡張を削除する場合:
 
 ```bash
 # コマンドを削除（Claude Codeの場合）
-rm .claude/commands/formalize.md
-rm .claude/commands/verify.md
+rm .claude/commands/speckit.modelcheck.formalize.md
+rm .claude/commands/speckit.modelcheck.verify.md
 
 # テンプレートを削除
-rm .specify/templates/formal-*
+rm .specify/templates/modelcheck-*
 
 # スクリプトを削除
 rm .specify/scripts/bash/verify.sh
 
 # ドキュメントを削除
-rm .specify/docs/FORMAL_METHODS_GUIDE.md
+rm .specify/docs/GUIDE.md
 
 # Docker環境を削除
 # Note: インストール時に配置したファイルを削除してください
@@ -408,7 +408,7 @@ rm .specify/docs/FORMAL_METHODS_GUIDE.md
 docker-compose down
 docker rmi model-checking-on-sdd_alloy-verify
 
-# 生成された形式仕様を削除(オプショナル)
+# 生成されたモデルを削除(オプショナル)
 find specs/ -type d -name "formal" -exec rm -rf {} +
 ```
 
@@ -462,5 +462,5 @@ A: 可能ですが、今回のスコープ外です。GitHub Actions等でdocker
 
 ---
 
-**インストール完了おめでとうございます!**  
-詳細な使い方は `FORMAL_METHODS_GUIDE.md` を参照してください。
+**インストール完了おめでとうございます!**
+詳細な使い方は `GUIDE.md` を参照してください。

@@ -1,6 +1,6 @@
-# Formal Verification Log: [FEATURE_NAME]
+# Model Checking Verification Log: [FEATURE_NAME]
 
-This document records all formal verification sessions for [FEATURE_NAME]. Each verification run is logged here with results and actions taken.
+This document records all model checking verification sessions for [FEATURE_NAME]. Each verification run is logged here with results and actions taken.
 
 ---
 
