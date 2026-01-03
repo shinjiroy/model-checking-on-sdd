@@ -3,7 +3,7 @@
 FROM eclipse-temurin:17-jdk-alpine
 
 # Alloy Analyzerのバージョン
-ARG ALLOY_VERSION=6.1.0
+ARG ALLOY_VERSION=6.2.0
 
 # 作業ディレクトリ
 WORKDIR /alloy
