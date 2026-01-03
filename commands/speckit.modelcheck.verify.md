@@ -75,18 +75,22 @@ If the script is at project root instead:
 From the verification output, extract:
 
 1. **Each property checked**
-   - Look for `[Check N: PropertyName]` patterns
+   - Check commands: `✅ PASS: PropertyName` or `❌ FAIL: PropertyName (counterexample found)`
+   - Run commands: `ℹ️  RUN: PropertyName - instance found` or `ℹ️  RUN: PropertyName - no instance`
+   - Unknown results: `⚠️  UNKNOWN: PropertyName (result)`
 
-2. **Results**
-   - `✅ PASS (no counterexample)` → Property passed
-   - `❌ FAIL (counterexample found)` → Property failed
+2. **Errors** (if any)
+   - Syntax/Parse errors: `🚫 Error: ...` or `🚫 Syntax error ...`
 
-3. **Counterexample details** (for failures)
-   - Extract relevant details from output
+3. **Results interpretation**
+   - `✅ PASS` → No counterexample found (property holds within scope)
+   - `❌ FAIL` → Counterexample found (property violated)
+   - `ℹ️  RUN - instance found` → Model is satisfiable (good)
+   - `ℹ️  RUN - no instance` → Model may be over-constrained (investigate)
 
-4. **Summary**
-   - Total properties checked
-   - Pass/fail count
+4. **Summary line**
+   - Format: `Summary: N/M checks passed`
+   - If failures: `⚠️  N check(s) FAILED`
 
 ### Step 5: Update Properties Document
 
