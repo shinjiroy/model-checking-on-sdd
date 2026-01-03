@@ -89,69 +89,72 @@ echo "================================================"
 echo ""
 
 # Run Alloy
-# Note: Alloy CLI executes all check commands with --check option
+# Use 'exec' subcommand to execute all check/run commands
+# -f: force overwrite of output directory
+# -o /tmp/alloy-output: write to writable directory (specs is read-only)
 if [ "$FORMAT" = "xml" ]; then
-    java -jar "$ALLOY_JAR" \
-        --timeout "$TIMEOUT" \
-        --xml \
+    java -jar "$ALLOY_JAR" exec \
+        -f \
+        -o /tmp/alloy-output \
+        -t xml \
         "$ALS_FILE"
 else
     # Text format (readable for Claude Code)
-    java -jar "$ALLOY_JAR" \
-        --timeout "$TIMEOUT" \
+    java -jar "$ALLOY_JAR" exec \
+        -f \
+        -o /tmp/alloy-output \
         "$ALS_FILE" 2>&1 | \
     awk '
     BEGIN {
-        print "Starting verification..."
-        in_result = 0
+        print "Verification Results:"
+        print "================================================"
         check_count = 0
+        pass_count = 0
+        fail_count = 0
     }
 
-    # Detect Check command
-    /Executing "Check/ {
+    # Match check commands: "02. check InitialStateValid        0       UNSAT"
+    /^[0-9]+\. check/ {
         check_count++
-        check_name = $0
-        gsub(/.*Executing "Check /, "", check_name)
-        gsub(/".*/, "", check_name)
-        print "\n[Check " check_count ": " check_name "]"
-        in_result = 1
+        # Extract command name (field 3)
+        cmd_name = $3
+
+        # Check result (last field): UNSAT = no counterexample = PASS
+        if ($NF == "UNSAT") {
+            print "✅ PASS: " cmd_name
+            pass_count++
+        } else if ($NF == "SAT") {
+            print "❌ FAIL: " cmd_name " (counterexample found)"
+            fail_count++
+        } else {
+            print "⚠️  UNKNOWN: " cmd_name " (" $NF ")"
+        }
         next
     }
 
-    # Detect results
-    /No counterexample found/ {
-        print "  Result: ✅ PASS (no counterexample)"
-        print "  Details: Property holds within specified scope"
-        in_result = 0
+    # Match run commands: "00. run InitialOrder 0 1/1 SAT" or "01. run run$2 0 UNSAT"
+    /^[0-9]+\. run/ {
+        cmd_name = $3
+        # SAT means instance found, UNSAT means no instance
+        if (/SAT$/ && !/UNSAT$/) {
+            print "ℹ️  RUN: " cmd_name " - instance found"
+        } else {
+            print "ℹ️  RUN: " cmd_name " - no instance"
+        }
         next
     }
 
-    /Counterexample found/ {
-        print "  Result: ❌ FAIL (counterexample found)"
-        in_result = 1
-        next
-    }
-
-    # Counterexample details
-    in_result && /---/ {
-        print "  " $0
-        next
-    }
-
-    in_result && /Skolem/ {
-        print "  " $0
-        next
-    }
-
-    # Error
-    /Error:/ {
-        print "Error: " $0
+    # Syntax/Parse errors (not the summary "Errors" line)
+    /^Error:/ || /Syntax error/ || /Parse error/ {
+        print "🚫 " $0
     }
 
     END {
-        print "\n================================================"
-        print "Verification complete: " check_count " properties checked"
         print "================================================"
+        print "Summary: " pass_count "/" check_count " checks passed"
+        if (fail_count > 0) {
+            print "⚠️  " fail_count " check(s) FAILED"
+        }
     }
     '
 fi
