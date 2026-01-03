@@ -1,12 +1,12 @@
 # Spec Kit Model Checking Extension - Alloy Docker Environment
 #
 # Usage:
-#   docker compose alloy-verify build    # Build image
-#   docker compose alloy-verify run ...  # Run verification
+#   docker compose build alloy-verify    # Build image
+#   docker compose run --rm alloy-verify ...  # Run verification
 #
 # Default context: docker/alloy/
 # Customization: Set ALLOY_DOCKER_DIR environment variable
-#   Example: ALLOY_DOCKER_DIR=.specify/docker/alloy docker compose alloy-verify build
+#   Example: ALLOY_DOCKER_DIR=.specify/docker/alloy docker compose build alloy-verify
 
 services:
   # Alloy verification service
