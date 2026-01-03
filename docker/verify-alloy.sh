@@ -15,20 +15,20 @@ Usage:
   verify-alloy <alloy-file.als> [options]
 
 Options:
-  --scope N        Verification scope (default: 5)
   --timeout N      Timeout in seconds (default: 300)
   --format FORMAT  Output format: text, xml (default: text)
   --help           Show this help
 
+Note: Scope is specified in the .als file (e.g., "check PropertyName for 5 but 8 Int")
+
 Examples:
   verify-alloy /specs/purchase.als
-  verify-alloy /specs/purchase.als --scope 7
+  verify-alloy /specs/purchase.als --timeout 600
   verify-alloy /specs/purchase.als --format xml
 EOF
 }
 
 # Default values
-SCOPE=5
 TIMEOUT=300
 FORMAT="text"
 ALS_FILE=""
@@ -39,10 +39,6 @@ while [ $# -gt 0 ]; do
         --help|-h)
             show_help
             exit 0
-            ;;
-        --scope)
-            SCOPE="$2"
-            shift 2
             ;;
         --timeout)
             TIMEOUT="$2"
@@ -82,25 +78,32 @@ echo "================================================"
 echo "Alloy Model Checking"
 echo "================================================"
 echo "File: $ALS_FILE"
-echo "Scope: $SCOPE"
 echo "Timeout: ${TIMEOUT}s"
 echo "Output format: $FORMAT"
+echo "Note: Scope is defined in the .als file"
 echo "================================================"
 echo ""
 
-# Run Alloy
+# Build format option
+FORMAT_OPT=""
+if [ "$FORMAT" = "xml" ]; then
+    FORMAT_OPT="-t xml"
+fi
+
+# Run Alloy with timeout
 # Use 'exec' subcommand to execute all check/run commands
 # -f: force overwrite of output directory
 # -o /tmp/alloy-output: write to writable directory (specs is read-only)
 if [ "$FORMAT" = "xml" ]; then
-    java -jar "$ALLOY_JAR" exec \
+    timeout "${TIMEOUT}s" java -jar "$ALLOY_JAR" exec \
         -f \
         -o /tmp/alloy-output \
         -t xml \
         "$ALS_FILE"
+    exit_code=$?
 else
     # Text format (readable for Claude Code)
-    java -jar "$ALLOY_JAR" exec \
+    timeout "${TIMEOUT}s" java -jar "$ALLOY_JAR" exec \
         -f \
         -o /tmp/alloy-output \
         "$ALS_FILE" 2>&1 | \
@@ -157,6 +160,14 @@ else
         }
     }
     '
+    exit_code=$?
+fi
+
+# Check timeout exit status (124 = timeout)
+if [ "$exit_code" -eq 124 ]; then
+    echo ""
+    echo "🚫 ERROR: Verification timed out after ${TIMEOUT}s"
+    exit 124
 fi
 
 echo ""

@@ -57,7 +57,7 @@ Arguments:
 
 Options:
   --scope N        Verification scope (default: 5)
-  --timeout N      Timeout in seconds (default: 300)
+  --timeout N      Timeout in seconds (default: 600)
   --format FORMAT  Output format: text, xml (default: text)
   --build          Rebuild Docker image
   --shell          Start Alloy environment shell
