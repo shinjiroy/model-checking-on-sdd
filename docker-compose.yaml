@@ -1,26 +1,30 @@
-# Spec Kit 形式検証拡張 - Alloy Docker環境
+# Spec Kit Model Checking Extension - Alloy Docker Environment
 #
-# デフォルト配置: docker/alloy/
-# カスタマイズ: ALLOY_DOCKER_DIR 環境変数で変更可能
-#   例: ALLOY_DOCKER_DIR=.specify/docker/alloy docker compose build
+# Usage:
+#   docker compose alloy-verify build    # Build image
+#   docker compose alloy-verify run ...  # Run verification
+#
+# Default context: docker/alloy/
+# Customization: Set ALLOY_DOCKER_DIR environment variable
+#   Example: ALLOY_DOCKER_DIR=.specify/docker/alloy docker compose alloy-verify build
 
 services:
-  # Alloy検証サービス
+  # Alloy verification service
   alloy-verify:
+    profiles: ["alloy"]
     build:
       context: ${ALLOY_DOCKER_DIR:-./docker/alloy}
       dockerfile: Dockerfile
     volumes:
-      # Spec Kitのspecsディレクトリをマウント
+      # Mount Spec Kit specs directory (read-only)
       - ./specs:/specs:ro
-      # 検証結果を出力するディレクトリ
-      - ./verification-results:/results
     working_dir: /specs
     stdin_open: true
     tty: true
 
-  # 開発用: Alloy環境にシェルでアクセス
+  # Development: Shell access to Alloy environment
   alloy-shell:
+    profiles: ["alloy"]
     build:
       context: ${ALLOY_DOCKER_DIR:-./docker/alloy}
       dockerfile: Dockerfile
