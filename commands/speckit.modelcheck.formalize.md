@@ -41,6 +41,23 @@ Read `specs/[FEATURE_NAME]/spec.md` and identify:
 **Operations**: What actions change the system state?
 **Properties to verify**: What should we prove? (safety, consistency, no duplicates)
 
+**Integer Value Range Analysis** (CRITICAL):
+- Identify all numeric values used in the spec (prices, quantities, percentages, etc.)
+- Document the min/max range for each
+- Select appropriate Int bit width based on the formula: `2^(n-1) - 1 >= max_value`
+
+| Bit Width | Max Value | Use Case |
+|-----------|-----------|----------|
+| 4 Int (default) | 7 | Very simple counters |
+| 6 Int | 31 | Small quantities |
+| 8 Int | 127 | Percentages (0-100) |
+| 10 Int | 511 | Larger values |
+
+**String Type Warning**:
+- Alloy's String type is extremely limited (no operations, limited comparison)
+- Use abstract sig enumerations instead of String for categories/statuses
+- Use unique sig atoms for identity values (email, ID)
+
 ### Step 2: Check for Size Concerns
 
 If the specification appears to cover multiple independent features (>200 lines of Alloy expected), **STOP and ask**:
@@ -83,56 +100,68 @@ Create `specs/[FEATURE_NAME]/formal/[feature].als` using the template at `.speci
  * Generated from: specs/[FEATURE_NAME]/spec.md
  * Date: [DATE]
  * Purpose: [Brief description from spec.md]
+ *
+ * Integer Range Analysis:
+ *   - [field1]: 0-100 → 8 Int required
+ *   - [field2]: 0-10 → 4 Int (default) sufficient
+ *   - Selected: 8 Int (based on largest required range)
  */
 
 // ============================================================================
 // SIGNATURES (Domain Model)
 // ============================================================================
-// Define all entities and their attributes
+// Avoid String type - use abstract sigs for enumerations
+
+abstract sig Status {}
+one sig Pending, Active, Completed extends Status {}
 
 sig User {
-    // User attributes
+    balance: Int
+} {
+    balance >= 0
+    balance <= 100  // Explicit bounds prevent overflow issues
 }
 
 sig Product {
-    // Product attributes
+    price: Int,
+    stock: Int
+} {
+    price >= 0
+    stock >= 0
 }
 
 // ... additional signatures
 
 
 // ============================================================================
-// FACTS (Global Invariants)
+// FACTS (Global Invariants - Keep Minimal)
 // ============================================================================
-// Constraints that must ALWAYS hold in every valid system state
+// WARNING: Over-constraining is a common mistake
 
 fact NoOrphanedData {
     // Example: All orders must belong to a valid user
     all o: Order | o.user in User
 }
 
-fact UniqueConstraints {
-    // Example: Each user has a unique email
-}
-
 // ... additional facts
 
 
 // ============================================================================
-// PREDICATES (Operations & State Transitions)
+// PREDICATES (Operations with Before/After Pattern)
 // ============================================================================
-// Define operations that change system state
+// Alloy models snapshots. Use before/after for state transitions.
 
-pred purchase[u: User, p: Product] {
-    // Preconditions
-    u.balance >= p.price
+// ❌ Wrong: Treating parameters as mutable
+// pred purchase[u: User, p: Product] { u.balance' = ... }
+
+// ✅ Correct: Use before/after atoms
+pred purchase[uBefore, uAfter: User, p: Product] {
+    // Precondition
+    uBefore.balance >= p.price
     p.stock > 0
 
-    // Postconditions (in a separate predicate for before/after)
-}
-
-pred addToCart[u: User, p: Product] {
-    // Operation definition
+    // Postcondition (what changes)
+    uAfter.balance = uBefore.balance.minus[p.price]
 }
 
 // ... additional predicates
@@ -141,21 +170,13 @@ pred addToCart[u: User, p: Product] {
 // ============================================================================
 // ASSERTIONS (Properties to Verify)
 // ============================================================================
-// Properties we want to prove hold in the system
-
-assert NoDoublePurchase {
-    // No user can purchase the same product twice simultaneously
-    all u: User, p: Product |
-        (purchase[u, p] and purchase[u, p]) implies ...
-}
 
 assert InventoryConsistency {
-    // Stock never goes negative
     all p: Product | p.stock >= 0
 }
 
 assert BalanceIntegrity {
-    // User balance never goes negative after purchase
+    all u: User | u.balance >= 0
 }
 
 // ... additional assertions
@@ -164,25 +185,56 @@ assert BalanceIntegrity {
 // ============================================================================
 // VERIFICATION COMMANDS
 // ============================================================================
-// Execute these to verify the assertions
+// Int width selected based on value range analysis above
 
-// Start with small scopes for quick iteration
-check NoDoublePurchase for 3
-check InventoryConsistency for 3
-check BalanceIntegrity for 3
+// STEP 1: ALWAYS run first to verify model is satisfiable
+run FindExample { some u: User | u.balance > 0 } for 3 but 8 Int
 
-// Increase scope for more thorough verification
-check NoDoublePurchase for 5
-check InventoryConsistency for 5
+// STEP 2: Check with small scope
+check InventoryConsistency for 3 but 8 Int
+check BalanceIntegrity for 3 but 8 Int
+
+// STEP 3: Check with larger scope (after step 2 passes)
+check InventoryConsistency for 5 but 8 Int
+check BalanceIntegrity for 5 but 8 Int
+
+// NOTE: If only small values (0-7), "but 8 Int" can be omitted for speed
 ```
 
 **Guidelines for model creation**:
 
 1. Use clear, domain-appropriate names
 2. Add comments explaining non-obvious constraints
-3. Start with small scopes (3-5) for quick feedback
-4. Group related elements together
-5. Keep the model readable for team review
+3. Group related elements together
+4. Keep the model readable for team review
+
+**Integer Bit Width Selection** (CRITICAL):
+
+| Bit Width | Max Value | Speed | Use Case |
+|-----------|-----------|-------|----------|
+| 4 Int (default) | 7 | Fastest | Simple counters (0-7) |
+| 6 Int | 31 | Fast | Small quantities |
+| 8 Int | 127 | Moderate | Percentages (0-100) |
+| 10 Int | 511 | Slow | Larger values |
+| 12+ Int | 2047+ | Very slow | Avoid if possible |
+
+**Arithmetic Safety**:
+- Integer overflow is silent (5+5 = -6 with 4 Int!)
+- Always add explicit bounds in sig constraints
+- Use `.plus[]` and `.minus[]` functions for clarity
+
+**Scope Selection**:
+
+| Scope | Speed | Confidence | Use Case |
+|-------|-------|------------|----------|
+| 3 | Fast | Low | Initial testing |
+| 5 | Moderate | Medium | Normal verification |
+| 7+ | Slow | High | Final validation |
+
+**Run Commands Are Mandatory**:
+- ALWAYS include `run` commands before `check` commands
+- `run` verifies the model is satisfiable (not over-constrained)
+- If `run` returns "no instance", the model has issues
 
 ### Step 5: Generate Properties Document
 

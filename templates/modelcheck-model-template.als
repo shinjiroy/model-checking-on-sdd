@@ -5,41 +5,60 @@
  * Date: [DATE]
  * Purpose: [BRIEF_DESCRIPTION]
  *
- * This Alloy model represents the requirements specified in spec.md for model checking.
- * It defines the system's structure, constraints, and properties to verify.
+ * Integer Range Analysis:
+ *   - [field1]: [min]-[max] → [N] Int required
+ *   - [field2]: [min]-[max] → [N] Int (default) sufficient
+ *   - Selected: [N] Int (based on largest required range)
+ *
+ * Bit Width Reference:
+ *   4 Int → max 7      (default, fastest)
+ *   6 Int → max 31     (fast)
+ *   8 Int → max 127    (moderate, good for percentages)
+ *   10 Int → max 511   (slow)
  */
 
 // ============================================================================
 // SIGNATURES (Domain Model)
 // ============================================================================
-// Define all entities and their attributes
-// These represent the core objects in your domain
+// IMPORTANT: Avoid String type - use abstract sigs for enumerations
+// Alloy's String has no operations (no concat, no substring, limited comparison)
 
-// Example: User entity
+// Example: Status enumeration (instead of String)
+abstract sig Status {}
+one sig Pending, Active, Completed extends Status {}
+
+// Example: User entity with explicit bounds
 sig User {
-    // Define user attributes
-    // Example: email: one String,
-    //          balance: one Int
+    balance: Int
+} {
+    // Inline constraints prevent overflow and invalid states
+    balance >= 0
+    balance <= 100  // Adjust based on your Integer Range Analysis
 }
 
 // Example: Product entity
 sig Product {
-    // Define product attributes
-    // Example: price: one Int,
-    //          stock: one Int
+    price: Int,
+    stock: Int
+} {
+    price >= 0
+    price <= 100
+    stock >= 0
+    stock <= 10
 }
 
 // Add additional signatures as needed for your domain
 // - Each sig represents an entity type
 // - Fields represent relationships or attributes
-// - Use multiplicity: one, lone, some, set
+// - Use multiplicity: one (exactly 1), lone (0 or 1), some (1+), set (0+)
+// - Add inline constraints {} for valid ranges
 
 
 // ============================================================================
-// FACTS (Global Invariants)
+// FACTS (Global Invariants - Keep Minimal!)
 // ============================================================================
-// Constraints that must ALWAYS hold in every valid system state
-// These are non-negotiable rules about your domain
+// WARNING: Over-constraining is a common mistake
+// Only add facts for truly universal constraints
 
 // Example: No orphaned data
 fact NoOrphanedData {
@@ -61,46 +80,56 @@ fact ValidRanges {
 
 // Add domain-specific facts
 // - Express invariants that should never be violated
-// - Keep each fact focused on one concept
+// - Keep each fact focused on one concept (1 concept = 1 fact)
 // - Name facts clearly to explain what they enforce
 
 
 // ============================================================================
-// PREDICATES (Operations & State Transitions)
+// PREDICATES (Operations with Before/After Pattern)
 // ============================================================================
-// Define operations that change system state
-// These represent actions users or systems can take
+// IMPORTANT: Alloy models snapshots, not transitions!
+// Use before/after atoms to model state changes.
 
 // Example: Purchase operation
-pred purchase[u: User, p: Product] {
-    // Preconditions (what must be true before the operation)
-    // Example:
-    // u.balance >= p.price
-    // p.stock > 0
-    
-    // Postconditions would typically be in a separate predicate
-    // showing the before/after states
+
+// ❌ WRONG: Treating parameters as mutable (Alloy has no primed variables!)
+// pred purchase[u: User, p: Product] {
+//     u.balance' = u.balance - p.price  // This DOES NOT work!
+// }
+
+// ✅ CORRECT: Use before/after atoms
+pred purchase[uBefore, uAfter: User, p: Product] {
+    // Precondition (what must be true before)
+    uBefore.balance >= p.price
+    p.stock > 0
+
+    // Frame condition (what stays the same)
+    // uAfter.email = uBefore.email
+
+    // Postcondition (what changes)
+    // Use .minus[] for safe subtraction (still overflows, but clearer)
+    uAfter.balance = uBefore.balance.minus[p.price]
 }
 
 // Example: Add to cart
 pred addToCart[u: User, p: Product] {
-    // Define the operation's preconditions and effects
+    // Define the operation's preconditions
 }
 
 // Add predicates for each major operation in your spec
-// - Use clear, domain-appropriate names
-// - Document preconditions and postconditions
-// - Consider using before/after state predicates for complex operations
+// - Use before/after pattern for state transitions
+// - Document preconditions and postconditions clearly
 
 
 // ============================================================================
 // HELPER PREDICATES (Optional)
 // ============================================================================
-// Utility predicates that help define more complex operations or assertions
+// Utility predicates for complex operations or assertions
 
 // Example: Check if purchase is valid
 pred canPurchase[u: User, p: Product] {
-    // Helper logic
+    u.balance >= p.price
+    p.stock > 0
 }
 
 
@@ -108,94 +137,101 @@ pred canPurchase[u: User, p: Product] {
 // ASSERTIONS (Properties to Verify)
 // ============================================================================
 // Properties we want to prove hold in the system
-// These are the formal guarantees we're checking
-
-// Example: No double purchase
-assert NoDoublePurchase {
-    // Formalize: A user cannot purchase the same product twice simultaneously
-    // Example:
-    // all u: User, p: Product |
-    //     not (purchase[u, p] and purchase[u, p])
-}
 
 // Example: Inventory consistency
 assert InventoryConsistency {
-    // Formalize: Stock never goes negative
-    // Example:
-    // all p: Product | p.stock >= 0
+    // Stock never goes negative
+    all p: Product | p.stock >= 0
 }
 
 // Example: Balance integrity
 assert BalanceIntegrity {
-    // Formalize: User balance never goes negative after valid operations
-    // Example:
-    // all u: User | u.balance >= 0
+    // User balance never goes negative
+    all u: User | u.balance >= 0
 }
 
 // Add assertions for each property you want to verify
 // - Focus on safety properties (bad things never happen)
-// - Consider liveness properties (good things eventually happen)
 // - Name assertions to clearly describe what's being proven
 
 
 // ============================================================================
 // VERIFICATION COMMANDS
 // ============================================================================
-// Execute these commands in Alloy Analyzer to verify the assertions
-// Start with small scopes (3-5) for quick feedback
-// Increase scope for more thorough verification (but slower)
+// IMPORTANT: Int width selected based on Integer Range Analysis above
+// Trade-off: Larger Int = exponentially slower verification
 
-// Verify with small scope (fast, good for initial testing)
-check NoDoublePurchase for 3
-check InventoryConsistency for 3
-check BalanceIntegrity for 3
+// ========================================
+// STEP 1: ALWAYS run first to verify model is satisfiable
+// ========================================
+// If run returns "no instance", the model is over-constrained!
 
-// Verify with larger scope (slower, more thorough)
-// Uncomment these after initial verification passes
-// check NoDoublePurchase for 5
-// check InventoryConsistency for 5
-// check BalanceIntegrity for 5
+// Examples
 
-// For very thorough verification (can be slow)
-// check NoDoublePurchase for 7
-// check InventoryConsistency for 7
+run FindValidInstance {
+    some u: User | u.balance > 0
+} for 3 but 8 Int
 
+// Add more run commands to explore different scenarios
+run FindPurchaseScenario {
+    some uBefore, uAfter: User, p: Product | purchase[uBefore, uAfter, p]
+} for 3 but 8 Int
 
-// ============================================================================
-// EXAMPLE PREDICATES (Optional - for exploring the model)
-// ============================================================================
-// These predicates help you understand the model by showing example instances
-// Not for verification, but for exploration and debugging
+// ========================================
+// STEP 2: Check with small scope (fast)
+// ========================================
+check InventoryConsistency for 3 but 8 Int
+check BalanceIntegrity for 3 but 8 Int
 
-// Example: Show a valid purchase scenario
-pred exampleValidPurchase {
-    some u: User, p: Product | purchase[u, p]
-}
+// ========================================
+// STEP 3: Check with larger scope (after step 2 passes)
+// ========================================
+// Uncomment after initial verification passes
+// check InventoryConsistency for 5 but 8 Int
+// check BalanceIntegrity for 5 but 8 Int
 
-// To visualize: Execute "run exampleValidPurchase for 3" in Alloy Analyzer
-// This shows you what a valid purchase looks like in your model
+// ========================================
+// Scope Selection Guide:
+// ========================================
+// Scope 3: Fast, good for initial testing
+// Scope 5: Moderate, normal verification
+// Scope 7+: Slow, final validation
+
+// NOTE: If only small values (0-7) are used throughout the model,
+// "but 8 Int" can be omitted to improve verification speed
 
 
 // ============================================================================
 // NOTES FOR MODEL DEVELOPMENT
 // ============================================================================
 /*
- * Development Guidelines:
- * 
- * 1. Start Simple: Begin with core entities and basic relationships
- * 2. Add Constraints: Add facts one at a time, verifying after each
- * 3. Define Operations: Model key operations from spec.md
- * 4. Write Assertions: Formalize the properties you want to guarantee
- * 5. Verify: Run checks with small scope first (for 3)
- * 6. Iterate: Fix issues, refine model, re-verify
- * 7. Increase Scope: Once passing at small scope, try larger (for 5, for 7)
- * 
- * Common Pitfalls:
- * - Over-constraining: Adding too many facts can make the model unsatisfiable
- * - Under-constraining: Too few facts may allow invalid states
- * - Scope too large: Start small (for 3) and increase gradually
- * - Complex predicates: Break down into smaller helper predicates
- * 
+ * Common Pitfalls to Avoid:
+ *
+ * 1. INTEGER OVERFLOW (CRITICAL)
+ *    - Default 4 Int range is -8 to 7
+ *    - 5 + 5 = -6 with 4 Int (silent overflow!)
+ *    - Always select appropriate bit width
+ *
+ * 2. STRING LIMITATIONS
+ *    - Alloy String has NO operations (no concat, no substring)
+ *    - Use abstract sig enumerations for categories/statuses
+ *    - Use unique sig atoms for identity values
+ *
+ * 3. STATE TRANSITIONS
+ *    - Alloy models snapshots, not mutable state
+ *    - Use before/after atoms, NOT primed variables
+ *    - For complex state machines: open util/ordering[State]
+ *
+ * 4. EMPTY SET HANDLING
+ *    - sum of empty set = 0
+ *    - all x: none | false is VACUOUSLY TRUE!
+ *
+ * 5. MULTIPLICITY CONFUSION
+ *    - one: exactly 1 (error if 0 is valid)
+ *    - lone: 0 or 1 (can be empty!)
+ *    - some: 1 or more
+ *    - set: 0 or more (can be empty!)
+ *
  * Debugging Tips:
  * - Use "run" commands to visualize example instances
  * - If a check fails, examine the counterexample carefully
