@@ -400,6 +400,7 @@ rm .specify/docs/GUIDE.md
 # rm docker-compose.yml
 
 # Dockerイメージを削除
+docker compose down
 docker rmi model-checking-on-sdd_alloy-verify
 
 # 生成されたモデルを削除(オプショナル)
