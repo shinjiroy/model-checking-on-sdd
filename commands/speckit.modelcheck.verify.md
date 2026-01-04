@@ -11,8 +11,10 @@ $ARGUMENTS
 You **MUST** consider the user input before proceeding (if not empty).
 User input may specify:
 - Feature name or path to .als file
-- Scope override (e.g., "scope 7")
+- Timeout override (e.g., "timeout 300")
 - Other verification options
+
+**Note**: Scope is specified in the .als file (e.g., `check PropertyName for 5 but 8 Int`), not via command-line options.
 
 ## Context Files
 
@@ -57,16 +59,19 @@ Please ensure verify.sh and docker-compose.yaml exist.
 **Use the Bash tool** to run verification automatically:
 
 ```bash
-.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als --scope [SCOPE]
+.specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als
 ```
-
-Default scope is 5. Use scope from user input if specified.
 
 If the script is at project root instead:
 
 ```bash
-./verify.sh specs/[FEATURE_NAME]/formal/[feature].als --scope [SCOPE]
+./verify.sh specs/[FEATURE_NAME]/formal/[feature].als
 ```
+
+**Options**:
+- `--timeout N`: Set timeout in seconds (default: 600)
+
+**Note**: Scope is defined in the .als file itself (e.g., `check PropertyName for 5 but 8 Int`).
 
 **Important**: Run this command and capture the output. Do NOT ask the user to run it manually.
 
@@ -92,6 +97,12 @@ From the verification output, extract:
    - Format: `Summary: N/M checks passed`
    - If failures: `⚠️  N check(s) FAILED`
 
+5. **Counterexamples** (if any failures)
+   - Header: `=== COUNTEREXAMPLE: PropertyName ===`
+   - Assertion: `[Assertion]` section shows the check command
+   - Skolem Variables: `[Skolem Variables]` section shows bound variables
+   - Instance Data: `[Instance Data]` section shows concrete values (may be empty)
+
 ### Step 5: Update Properties Document
 
 Based on verification results, update `specs/[FEATURE_NAME]/formal/properties.md`:
@@ -99,7 +110,6 @@ Based on verification results, update `specs/[FEATURE_NAME]/formal/properties.md
 Change status indicators:
 - `⬜ Not verified` → `✅ PASS` or `❌ FAIL`
 - Add verification date
-- Add scope used
 - Add notes about counterexamples (if any)
 
 Example update:
@@ -155,11 +165,26 @@ Append a full session entry:
 ### Failed Properties Detail
 
 #### [FailedPropertyName]
-**Counterexample observed**:
-[Description from output]
+
+**Counterexample from verification output**:
+```text
+[Assertion]
+check FailedPropertyName for 5 but 8 Int
+
+[Skolem Variables]
+$FailedPropertyName_o = Order$0
+
+[Instance Data]
+Order$0:
+  state: Confirmed
+  totalAmount: 100
+```
 
 **Analysis**:
-[Analyze based on output details]
+[Interpret the counterexample: explain what scenario violates the property and why]
+
+**Root Cause**:
+[Identify the underlying issue in the model or spec]
 
 ### Actions Required
 - [ ] [Action items based on failures]

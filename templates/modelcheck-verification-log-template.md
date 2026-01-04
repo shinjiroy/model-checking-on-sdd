@@ -58,16 +58,27 @@ This document records all model checking verification sessions for [FEATURE_NAME
 
 ❌ **PropertyName2**
 
-**Counterexample Description**:
-[Describe the scenario that violates the property in plain language]
+**Counterexample from verification output**:
+```text
+[Assertion]
+check PropertyName2 for 5 but 8 Int
 
-**Instance Details**:
-[Key details from the counterexample graph]
-- Entity1: attribute = value
-- Entity2: attribute = value
-- Relationship: ...
+[Skolem Variables]
+$PropertyName2_o = Order$0
 
-**Root Cause Analysis**:
+[Instance Data]
+Order$0:
+  state: Confirmed
+  totalAmount: 100
+PurchaseItem$0:
+  basePrice: 50
+  finalPrice: 30
+```
+
+**Analysis**:
+[Interpret the counterexample: explain what scenario violates the property and why]
+
+**Root Cause**:
 [Analysis of why this violation occurred]
 
 **Proposed Fix**:
