@@ -1,0 +1,9 @@
+# デフォルトのSpeckit関連ファイル
+.claude/commands/speckit.*
+.specify/
+
+# インストール先
+docker/alloy
+
+# Alloy検証出力
+alloy-output/
