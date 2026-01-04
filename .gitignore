@@ -4,3 +4,6 @@
 
 # インストール先
 docker/alloy
+
+# Alloy検証出力
+alloy-output/

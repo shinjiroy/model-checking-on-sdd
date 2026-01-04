@@ -18,6 +18,8 @@ services:
     volumes:
       # Mount Spec Kit specs directory (read-only)
       - ./specs:/specs:ro
+      # Output directory for verification results (writable)
+      - ${ALLOY_OUTPUT_DIR:-./alloy-output}:/output
     working_dir: /specs
     stdin_open: true
     tty: true

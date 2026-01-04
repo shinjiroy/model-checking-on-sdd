@@ -5,6 +5,7 @@
 set -e
 
 ALLOY_JAR="/alloy/alloy.jar"
+OUTPUT_DIR="/output"
 
 # Show help
 show_help() {
@@ -15,7 +16,7 @@ Usage:
   verify-alloy <alloy-file.als> [options]
 
 Options:
-  --timeout N      Timeout in seconds (default: 300)
+  --timeout N      Timeout in seconds (default: 600)
   --format FORMAT  Output format: text, xml (default: text)
   --help           Show this help
 
@@ -29,7 +30,7 @@ EOF
 }
 
 # Default values
-TIMEOUT=300
+TIMEOUT=600
 FORMAT="text"
 ALS_FILE=""
 
@@ -84,20 +85,20 @@ echo "Note: Scope is defined in the .als file"
 echo "================================================"
 echo ""
 
-# Build format option
-FORMAT_OPT=""
-if [ "$FORMAT" = "xml" ]; then
-    FORMAT_OPT="-t xml"
-fi
+# Clear output directory
+rm -rf "${OUTPUT_DIR:?}"/* 2>/dev/null || true
+
+# Track failed checks for counterexample display
+FAILED_CHECKS=""
 
 # Run Alloy with timeout
 # Use 'exec' subcommand to execute all check/run commands
 # -f: force overwrite of output directory
-# -o /tmp/alloy-output: write to writable directory (specs is read-only)
+# -o /output: write to mounted output directory
 if [ "$FORMAT" = "xml" ]; then
     timeout "${TIMEOUT}s" java -jar "$ALLOY_JAR" exec \
         -f \
-        -o /tmp/alloy-output \
+        -o "$OUTPUT_DIR" \
         -t xml \
         "$ALS_FILE"
     exit_code=$?
@@ -105,7 +106,7 @@ else
     # Text format (readable for Claude Code)
     timeout "${TIMEOUT}s" java -jar "$ALLOY_JAR" exec \
         -f \
-        -o /tmp/alloy-output \
+        -o "$OUTPUT_DIR" \
         "$ALS_FILE" 2>&1 | \
     awk '
     BEGIN {
@@ -129,6 +130,8 @@ else
         } else if ($NF == "SAT") {
             print "❌ FAIL: " cmd_name " (counterexample found)"
             fail_count++
+            # Output failed check name for later processing
+            print cmd_name > "/tmp/failed_checks.txt"
         } else {
             print "⚠️  UNKNOWN: " cmd_name " (" $NF ")"
         }
@@ -168,6 +171,21 @@ if [ "$exit_code" -eq 124 ]; then
     echo ""
     echo "🚫 ERROR: Verification timed out after ${TIMEOUT}s"
     exit 124
+fi
+
+# Display counterexamples for failed checks
+RECEIPT_FILE="${OUTPUT_DIR}/receipt.json"
+if [ -f "$RECEIPT_FILE" ] && [ -f "/tmp/failed_checks.txt" ]; then
+    echo ""
+    echo "================================================"
+    echo "Counterexamples"
+    echo "================================================"
+
+    while IFS= read -r check_name; do
+        parse-counterexample "$RECEIPT_FILE" "$check_name"
+    done < /tmp/failed_checks.txt
+
+    rm -f /tmp/failed_checks.txt
 fi
 
 echo ""
