@@ -65,12 +65,13 @@ cp /path/to/model-checking-on-sdd/GUIDE.md .specify/docs/
 
 # Docker環境をコピー
 cp -r /path/to/model-checking-on-sdd/docker ./
-cp /path/to/model-checking-on-sdd/docker-compose.yml ./
+cp /path/to/model-checking-on-sdd/docker-compose.yaml ./
 cp /path/to/model-checking-on-sdd/verify.sh ./
 chmod +x verify.sh
 
 # Dockerイメージをビルド
-docker compose build alloy-verify
+mkdir -p docker/alloy
+cp -r ${FORMAL_PKG}/docker/* docker/alloy/
 ```
 
 ### 動作確認
