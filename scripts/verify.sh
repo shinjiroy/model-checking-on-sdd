@@ -159,7 +159,10 @@ if [[ "$BUILD" == true ]]; then
 fi
 
 # Check if Docker image exists
-if ! docker compose images alloy-verify | grep -q alloy-verify; then
+# Use docker images directly (docker compose images doesn't work with profiles)
+PROJECT_NAME=$(basename "$PROJECT_ROOT" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9_-]/-/g')
+IMAGE_NAME="${PROJECT_NAME}-alloy-verify"
+if ! docker images -q "$IMAGE_NAME" | grep -q .; then
     echo -e "${YELLOW}Docker image not found. Building...${NC}"
     build_image
 fi
