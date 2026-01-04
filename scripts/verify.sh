@@ -30,12 +30,15 @@ fi
 
 cd "$PROJECT_ROOT"
 
-# Load .env file if exists (for ALLOY_DOCKER_DIR etc.)
+# Load .env file if exists (for ALLOY_DOCKER_DIR, ALLOY_OUTPUT_DIR etc.)
 if [[ -f ".env" ]]; then
     set -a
     source .env
     set +a
 fi
+
+# Output directory (can be overridden via ALLOY_OUTPUT_DIR env var)
+ALLOY_OUTPUT_DIR="${ALLOY_OUTPUT_DIR:-./alloy-output}"
 
 # Color output
 RED='\033[0;31m'
@@ -56,19 +59,20 @@ Arguments:
                    (e.g., specs/001-purchase/formal/purchase.als)
 
 Options:
-  --scope N        Verification scope (default: 5)
-  --timeout N      Timeout in seconds (default: 600)
+  --timeout N      Timeout in seconds (default: 300)
   --format FORMAT  Output format: text, xml (default: text)
   --build          Rebuild Docker image
   --shell          Start Alloy environment shell
   --help           Show this help
 
+Note: Scope is specified in the .als file (e.g., "check PropertyName for 5 but 8 Int")
+
 Examples:
   # Basic verification
   ./verify.sh specs/001-purchase/formal/purchase.als
 
-  # Specify scope
-  ./verify.sh specs/001-purchase/formal/purchase.als --scope 7
+  # Specify timeout
+  ./verify.sh specs/001-purchase/formal/purchase.als --timeout 600
 
   # Rebuild image and verify
   ./verify.sh specs/001-purchase/formal/purchase.als --build
@@ -113,7 +117,7 @@ while [[ $# -gt 0 ]]; do
             SHELL_MODE=true
             shift
             ;;
-        --scope|--timeout|--format)
+        --timeout|--format)
             VERIFY_ARGS="$VERIFY_ARGS $1 $2"
             shift 2
             ;;
@@ -155,13 +159,13 @@ if [[ "$BUILD" == true ]]; then
 fi
 
 # Check if Docker image exists
-# Use docker images directly (docker compose images doesn't work with profiles)
-PROJECT_NAME=$(basename "$PROJECT_ROOT" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9_-]/-/g')
-IMAGE_NAME="${PROJECT_NAME}-alloy-verify"
-if ! docker images -q "$IMAGE_NAME" | grep -q .; then
+if ! docker compose images alloy-verify | grep -q alloy-verify; then
     echo -e "${YELLOW}Docker image not found. Building...${NC}"
     build_image
 fi
+
+# Create output directory if it doesn't exist
+mkdir -p "$ALLOY_OUTPUT_DIR"
 
 # Run verification
 echo -e "${GREEN}Starting Alloy verification...${NC}"
