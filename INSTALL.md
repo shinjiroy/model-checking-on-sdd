@@ -184,12 +184,13 @@ Arguments:
                    (e.g., specs/001-purchase/formal/purchase.als)
 
 Options:
-  --scope N        Verification scope (default: 5)
-  --timeout N      Timeout in seconds (default: 300)
+  --timeout N      Timeout in seconds (default: 600)
   --format FORMAT  Output format: text, xml (default: text)
   --build          Rebuild Docker image
   --shell          Start Alloy environment shell
   --help           Show this help
+
+Note: Scope is specified in the .als file (e.g., "check PropertyName for 5 but 8 Int")
 ...
 ```
 
@@ -252,7 +253,8 @@ your-project/
 ├── docker/
 │   └── alloy/                             # ✨ 新規: Alloy Docker環境
 │       ├── Dockerfile
-│       └── verify-alloy.sh
+│       ├── verify-alloy.sh
+│       └── parse-counterexample.sh        # 反例解析スクリプト
 │
 ├── docker-compose.yaml                     # ✨ 新規
 ├── .env.example                            # ✨ 新規: カスタマイズ用

@@ -260,7 +260,8 @@ specs/{FEATURE_NAME}/
 
 反復2:
 - ✅ スコープ3ですべて合格
-- /speckit.modelcheck.verify scope 5 → より徹底的に検証
+- alsファイルのスコープを5に変更 → より徹底的に検証
+- /speckit.modelcheck.verify        → 再検証
 - ❌ 新しい失敗                      → エッジケース発見
 - spec.mdを更新                     → 要件を明確化
 - /speckit.modelcheck.formalize     → モデルを再生成
@@ -355,7 +356,8 @@ specs/{FEATURE_NAME}/
 
 **ヒント**:
 
-- スコープ指定: `/speckit.modelcheck.verify scope 7` のように入力
+- タイムアウト指定: `/speckit.modelcheck.verify timeout 300` のように入力
+- スコープはalsファイル内で指定（例: `check PropertyName for 7 but 8 Int`）
 - 失敗した場合は反例を分析し、モデルを修正して再実行
 - 各検証反復後にこれを使用
 
@@ -463,15 +465,33 @@ assert UserProperty {
 
 #### 3. 反例を理解する
 
-プロパティが失敗したとき:
+プロパティが失敗したとき、検証出力に反例情報が表示されます:
 
-1. **グラフを注意深く見る**
-2. **何が間違っているか特定**(どの制約が違反されているか?)
-3. **パスをトレース**(どうやってこの状態に至ったか?)
-4. **修正を決定**:
-   - モデルエラー? → `.als`を修正
-   - 仕様の隙間? → `spec.md`を更新
-   - 有効なエッジケース? → 既知の制限として文書化
+```text
+=== COUNTEREXAMPLE: PropertyName ===
+
+[Assertion]
+check PropertyName for 5 but 8 Int
+
+[Skolem Variables]
+$PropertyName_o = Order$0
+
+[Instance Data]
+Order$0:
+  field: value
+```
+
+**解釈手順**:
+
+1. **Skolem変数を確認**: `$PropertyName_o = Order$0` はアサーションを違反するインスタンスを示す
+2. **alsファイルのassertを参照**: 対応するassert文を読み、論理構造を理解
+3. **違反の意味を分析**: Skolemが存在 = 前提条件は満たすが不変条件に違反
+4. **Instance Dataが空の場合**: Skolem変数 + モデル定義から具体例を推測
+
+**修正を決定**:
+- モデルエラー? → `.als`を修正
+- 仕様の隙間? → `spec.md`を更新
+- 有効なエッジケース? → 既知の制限として文書化
 
 ### ドキュメント
 
@@ -949,6 +969,7 @@ check NoUnauthorizedAccess for 5
   formal/verification-log.md → 履歴記録
 
 検証:
+  スコープはalsファイル内で指定 (例: check P for 5 but 8 Int)
   開始: スコープ3 (高速)
   標準: スコープ5 (推奨)
   徹底: スコープ7以上 (重要機能)
