@@ -100,8 +100,11 @@ From the verification output, extract:
 5. **Counterexamples** (if any failures)
    - Header: `=== COUNTEREXAMPLE: PropertyName ===`
    - Assertion: `[Assertion]` section shows the check command
-   - Skolem Variables: `[Skolem Variables]` section shows bound variables
-   - Instance Data: `[Instance Data]` section shows concrete values (may be empty)
+   - Skolem Variables: `[Skolem Variables]` section shows bound variables (critical for interpretation)
+   - Instance Data: `[Instance Data]` section shows concrete values
+
+   **Note**: Instance Data may be empty for `check` commands. This is normal Alloy behavior.
+   When empty, use Skolem Variables + Alloy model to interpret the counterexample (see Step 6).
 
 ### Step 5: Update Properties Document
 
@@ -167,6 +170,7 @@ Append a full session entry:
 #### [FailedPropertyName]
 
 **Counterexample from verification output**:
+
 ```text
 [Assertion]
 check FailedPropertyName for 5 but 8 Int
@@ -180,13 +184,36 @@ Order$0:
   totalAmount: 100
 ```
 
+**Interpretation procedure** (especially when Instance Data is empty):
+
+1. **Identify Skolem variable**: `$FailedPropertyName_o = Order$0`
+   - This indicates which instance violates the assertion
+
+2. **Find the assertion in .als file**:
+   ```alloy
+   assert FailedPropertyName {
+     all o: Order | SomePredicate[o] implies SomeInvariant[o]
+   }
+   ```
+
+3. **Analyze the logical meaning**:
+   - Skolem `_o = Order$0` means: there exists an Order that satisfies `SomePredicate` but violates `SomeInvariant`
+   - Check what constraints are missing in `SomePredicate`
+
+4. **Construct concrete example** (infer from model constraints):
+   | Field | Possible Value | Why |
+   |-------|----------------|-----|
+   | field1 | value1 | Based on sig constraints |
+   | field2 | value2 | Missing invariant check |
+
 **Analysis**:
-[Interpret the counterexample: explain what scenario violates the property and why]
+[Explain what scenario violates the property based on the interpretation above]
 
 **Root Cause**:
-[Identify the underlying issue in the model or spec]
+[Identify the underlying issue - missing constraint, wrong predicate logic, etc.]
 
 ### Actions Required
+
 - [ ] [Action items based on failures]
 ```
 
@@ -204,35 +231,74 @@ Append a brief entry only:
 
 ### Step 7: Analyze Failures and Suggest Fixes
 
-For each failed property, provide analysis and suggestions:
+For each failed property, **read the .als file** and interpret the counterexample:
+
+#### Interpretation Steps
+
+1. **Parse Skolem variable naming convention**:
+   - `$PropertyName_o` → quantified variable `o` in the assertion
+   - `$PropertyName_i` → quantified variable `i` in the assertion
+   - Value (e.g., `Order$0`) → the specific instance that violates the property
+
+2. **Locate assertion in .als file**:
+   ```alloy
+   assert PropertyName {
+     all o: Order | Precondition[o] implies Invariant[o]
+   }
+   ```
+
+3. **Determine violation type**:
+   - Skolem exists → `Precondition[o]` is true BUT `Invariant[o]` is false
+   - Check what `Precondition` allows that `Invariant` forbids
+
+4. **Trace to root cause**:
+   - Missing constraint in predicate?
+   - Incorrect arithmetic (Int overflow)?
+   - Unintended state combination?
+
+#### Analysis Template
 
 ```markdown
 ## Analysis of Failures
 
 ### [PropertyName] Failed
 
-**Root cause**: [Analysis of why it failed]
+**Skolem interpretation**:
+- `$PropertyName_o = Order$0` indicates an Order exists where:
+  - `[Precondition]` holds (constraints X, Y, Z satisfied)
+  - `[Invariant]` fails (constraint W violated)
+
+**Root cause**:
+[Precondition] does not enforce [specific constraint], allowing instances where [describe the violation scenario].
+
+**Concrete example** (inferred):
+- Order with items where sum(itemDiscounts) = 25
+- But Order.totalDiscount = 30 (mismatch allowed)
 
 **Suggested fixes**:
 
-**Option A: Add constraint to the model**
+**Option A: Add constraint to predicate**
+
 ```alloy
-fact [ConstraintName] {
-    // Fix suggestion
+pred [PredicateName][o: Order] {
+    // existing constraints...
+    // ADD: enforce the missing invariant
+    sum(o.items.discount) = o.totalDiscount
 }
 ```
 
-**Option B: Strengthen preconditions**
+**Option B: Add fact to model**
+
 ```alloy
-pred [operationName][...] {
-    // Updated preconditions
+fact [ConstraintName] {
+    all o: Order | sum(o.items.discount) = o.totalDiscount
 }
 ```
 
 **Option C: Refine spec.md**
 If the counterexample reveals a genuine business logic gap, update `spec.md` to clarify the requirements.
 
-**Recommendation**: [Which option to start with]
+**Recommendation**: [Which option to start with and why]
 ```
 
 ### Step 8: Summary Report
