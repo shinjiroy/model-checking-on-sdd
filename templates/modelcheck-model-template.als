@@ -1,7 +1,7 @@
 /**
  * [FEATURE_NAME] - Alloy Model for Model Checking
  *
- * Generated from: specs/[FEATURE_NAME]/spec.md
+ * Generated from: specs/[FEATURE_NAME]/plan.md
  * Date: [DATE]
  * Purpose: [BRIEF_DESCRIPTION]
  *

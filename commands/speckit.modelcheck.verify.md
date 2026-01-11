@@ -21,6 +21,8 @@ User input may specify:
 - Alloy Model: `specs/[FEATURE_NAME]/formal/[feature].als`
 - Properties List: `specs/[FEATURE_NAME]/formal/properties.md`
 - Previous Log: `specs/[FEATURE_NAME]/formal/verification-log.md` (if exists)
+- Technical Plan: `specs/[FEATURE_NAME]/plan.md` (for counterexample interpretation)
+- Data Model: `specs/[FEATURE_NAME]/data-model.md` (if exists)
 - Verification Script: `.specify/scripts/bash/verify.sh`
 
 ## Outline
@@ -295,8 +297,8 @@ fact [ConstraintName] {
 }
 ```
 
-**Option C: Refine spec.md**
-If the counterexample reveals a genuine business logic gap, update `spec.md` to clarify the requirements.
+**Option C: Refine plan.md**
+If the counterexample reveals a genuine technical design gap, update `plan.md` to clarify the design decisions.
 
 **Recommendation**: [Which option to start with and why]
 ```

@@ -25,14 +25,16 @@ Create **exactly one** Alloy model file per specification:
 ## Context Files (Read These First)
 
 1. Constitution: `.specify/memory/constitution.md`
-2. Feature Spec: `specs/[FEATURE_NAME]/spec.md`
-3. Technical Plan: `specs/[FEATURE_NAME]/plan.md` (if exists)
+2. Technical Plan: `specs/[FEATURE_NAME]/plan.md`
+3. Data Model: `specs/[FEATURE_NAME]/data-model.md` (if exists)
+4. API Contracts: `specs/[FEATURE_NAME]/contracts/` (if exists)
+5. Research: `specs/[FEATURE_NAME]/research.md` (if exists)
 
 ## Outline
 
-### Step 1: Analyze the Specification
+### Step 1: Analyze the Technical Design
 
-Read `specs/[FEATURE_NAME]/spec.md` and identify:
+Read `specs/[FEATURE_NAME]/plan.md` and related files (data-model.md, contracts/) to identify:
 
 **Domain entities**: What are the main entities? (User, Product, Order, Cart, etc.)
 **Relationships**: How do entities relate to each other?
@@ -97,9 +99,9 @@ Create `specs/[FEATURE_NAME]/formal/[feature].als` using the template at `.speci
 /**
  * [FEATURE_NAME] - Alloy Model for Model Checking
  *
- * Generated from: specs/[FEATURE_NAME]/spec.md
+ * Generated from: specs/[FEATURE_NAME]/plan.md
  * Date: [DATE]
- * Purpose: [Brief description from spec.md]
+ * Purpose: [Brief description from plan.md]
  *
  * Integer Range Analysis:
  *   - [field1]: 0-100 → 8 Int required
@@ -303,5 +305,5 @@ I need clarification to create an accurate Alloy model:
 3. [Question about expected behavior]
 
 These details are needed to properly model the system for model checking in Alloy.
-Would you like to update spec.md first, or shall I make reasonable assumptions?
+Would you like to update plan.md first, or shall I make reasonable assumptions?
 ```

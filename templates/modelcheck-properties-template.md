@@ -153,7 +153,7 @@ If a property fails (❌):
 
 2. **Determine Root Cause**
    - Is the model incorrect? (Fix the `.als` file)
-   - Is the specification incomplete? (Update `spec.md`)
+   - Is the technical design incomplete? (Update `plan.md`)
    - Is the property too strict? (Refine the assertion)
 
 3. **Take Action**

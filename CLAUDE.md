@@ -67,9 +67,10 @@ specs/{FEATURE_NAME}/
 
 ## 設計原則
 
-1. **1仕様 = 1 Alloyモデル**: 明確なトレーサビリティを維持。モデル > 200行なら仕様分割を検討
-2. **非侵襲性**: `spec.md`, `plan.md`, `tasks.md` を変更しない。モデル検査成果物は `formal/` に配置
-3. **環境統一**: Docker経由でAlloy CLI検証。ローカルJava環境不要
+1. **検査対象は技術設計**: `spec.md`（WHAT）ではなく `plan.md`（HOW）を検査対象とする。`data-model.md`, `contracts/` も参照
+2. **1技術設計 = 1 Alloyモデル**: 明確なトレーサビリティを維持。モデル > 200行なら仕様分割を検討
+3. **非侵襲性**: `spec.md`, `plan.md`, `tasks.md` を変更しない。モデル検査成果物は `formal/` に配置
+4. **環境統一**: Docker経由でAlloy CLI検証。ローカルJava環境不要
 
 ## Alloyモデル作成時の注意
 
