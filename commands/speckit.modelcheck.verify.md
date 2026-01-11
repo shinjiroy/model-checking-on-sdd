@@ -220,10 +220,7 @@ Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`.
 
 **First, check the previous verification session** in the log file to compare results.
 
-**For each failed property**, perform analysis and include it in the log entry:
-1. Locate the assertion in `.als` file
-2. Interpret the counterexample (Skolem variable + Instance Data)
-3. Determine root cause and fix strategy
+**For each failed property**, perform analysis using the interpretation steps from Step 4.3 and include it in the log entry.
 
 **Example analysis**:
 
