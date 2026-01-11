@@ -1,9 +1,10 @@
 ---
 description: Generate Alloy model from technical design (plan.md).
 handoffs:
-  - label: Run Verification
-    agent: speckit.modelcheck.verify
-    prompt: Verify the generated Alloy model
+  - label: "Run Verification"
+    agent: "speckit.modelcheck.verify"
+    prompt: "Verify the generated Alloy model for the feature. Run verification checks and document results in verification-log.md"
+    send: false
 ---
 
 ## User Input
