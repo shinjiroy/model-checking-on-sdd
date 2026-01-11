@@ -71,7 +71,9 @@ Please ensure .specify/scripts/bash/verify.sh and docker-compose.yaml exist.
 
 **Important**: Run this command and capture the output. Do NOT ask the user to run it manually.
 
-### Step 4: Parse Verification Output
+### Step 4: Parse and Interpret Verification Output
+
+#### 4.1 Parse Results
 
 From the verification output, extract:
 
@@ -93,14 +95,101 @@ From the verification output, extract:
    - Format: `Summary: N/M checks passed`
    - If failures: `⚠️  N check(s) FAILED`
 
-5. **Counterexamples** (if any failures)
-   - Header: `=== COUNTEREXAMPLE: PropertyName ===`
-   - Assertion: `[Assertion]` section shows the check command
-   - Skolem Variables: `[Skolem Variables]` section shows bound variables (critical for interpretation)
-   - Instance Data: `[Instance Data]` section shows concrete values
+#### 4.2 Extract Counterexamples (for failures)
 
-   **Note**: Instance Data may be empty for `check` commands. This is normal Alloy behavior.
-   When empty, use Skolem Variables + Alloy model to interpret the counterexample (see Step 6).
+For each failed property, extract the counterexample structure:
+
+```text
+=== COUNTEREXAMPLE: PropertyName ===
+[Assertion]
+check PropertyName for 5 but 8 Int
+
+[Skolem Variables]
+$PropertyName_x = Entity$0
+$PropertyName_y = Entity$1
+
+[Instance Data]
+Entity$0:
+  field1: value1
+  field2: value2
+```
+
+**CRITICAL - Instance Data Interpretation:**
+
+Instance Data can appear in two forms:
+
+1. **Populated Instance Data** (common for `run` commands):
+   ```text
+   [Instance Data]
+   Order$0:
+     state: Confirmed
+     totalAmount: 100
+   ```
+   → Direct interpretation: use the provided values
+
+2. **Empty Instance Data** (common for `check` commands):
+   ```text
+   [Instance Data]
+   <empty>
+   ```
+   → **This is normal Alloy behavior for assertion violations**
+   → Must infer the violation from:
+      - Skolem variable bindings
+      - The assertion structure in the .als file
+      - Signature constraints in the model
+
+#### 4.3 Interpret Empty Instance Data Cases
+
+When Instance Data is empty, follow these steps:
+
+**Step 1**: Identify the Skolem variable(s)
+```text
+[Skolem Variables]
+$PropertyName_o = Order$0
+```
+This tells you: "There exists an Order (called Order$0) that violates the assertion"
+
+**Step 2**: Locate the assertion in the .als file
+```alloy
+assert PropertyName {
+  all o: Order | Precondition[o] implies Invariant[o]
+}
+```
+
+**Step 3**: Determine what violated
+- Skolem variable exists → `Precondition[o]` is TRUE
+- Assertion failed → `Invariant[o]` is FALSE
+- Therefore: The model allows a state where Precondition holds but Invariant doesn't
+
+**Step 4**: Infer concrete scenario from model constraints
+Read the signature definitions and facts to construct a plausible scenario:
+
+| Field | Possible Value | Why |
+|-------|---------------|-----|
+| field1 | value_range | Based on sig constraints |
+| field2 | missing_check | No constraint enforcing invariant |
+
+**Example:**
+
+```text
+[Skolem Variables]
+$TotalMismatch_o = Order$0
+
+[Instance Data]
+<empty>
+```
+
+From the .als file:
+```alloy
+assert TotalMismatch {
+  all o: Order | sum(o.items.price) = o.totalAmount
+}
+```
+
+Interpretation:
+- Order$0 exists where: sum(items.price) ≠ totalAmount
+- Concrete scenario: Order with items totaling $100 but totalAmount set to $150
+- Root cause: No constraint in the model enforces this equality
 
 ### Step 5: Update Properties Document
 
@@ -209,7 +298,7 @@ Order$0:
 
 2. **Interpret the counterexample**:
    - Skolem variable `$FailedPropertyName_o = Order$0` shows which instance violates
-   - If Instance Data is empty, infer from Skolem + model constraints
+   - If Instance Data is empty, follow the interpretation steps in Step 4.3
    - Example: `$NoNegativeBalance_u = User$0` with `User$0.balance = -5` means User$0 violates the balance >= 0 constraint
 
 3. **Determine root cause**:
