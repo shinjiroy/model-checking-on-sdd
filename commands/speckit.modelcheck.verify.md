@@ -46,14 +46,14 @@ Please run `/speckit.modelcheck.formalize` first to generate the Alloy model.
 
 Verify that required files exist:
 
-- `.specify/scripts/bash/verify.sh` or project root `verify.sh`
-- `docker-compose.yaml` or `docker-compose.yml`
+- `.specify/scripts/bash/verify.sh`
+- `docker-compose.yaml`
 
 If missing Docker setup:
 
 ```
 Error: Docker verification setup not found.
-Please ensure verify.sh and docker-compose.yaml exist.
+Please ensure .specify/scripts/bash/verify.sh and docker-compose.yaml exist.
 ```
 
 ### Step 3: Execute Verification
@@ -62,12 +62,6 @@ Please ensure verify.sh and docker-compose.yaml exist.
 
 ```bash
 .specify/scripts/bash/verify.sh specs/[FEATURE_NAME]/formal/[feature].als
-```
-
-If the script is at project root instead:
-
-```bash
-./verify.sh specs/[FEATURE_NAME]/formal/[feature].als
 ```
 
 **Options**:
