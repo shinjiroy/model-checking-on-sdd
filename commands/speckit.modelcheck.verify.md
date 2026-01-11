@@ -1,5 +1,5 @@
 ---
-description: Execute and document model checking verification using Alloy via Docker CLI. (project)
+description: Execute and document model checking verification using Alloy.
 ---
 
 ## User Input
