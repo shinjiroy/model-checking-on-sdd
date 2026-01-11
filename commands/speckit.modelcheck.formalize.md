@@ -1,5 +1,5 @@
 ---
-description: Generate Alloy model for model checking from natural language spec. (project)
+description: Generate Alloy model for model checking from technical design. (project)
 handoffs:
   - label: Run Verification
     agent: speckit.modelcheck.verify
