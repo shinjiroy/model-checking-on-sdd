@@ -113,7 +113,7 @@ Change status indicators:
 
 Example update:
 
-```markdown
+~~~markdown
 ### 1. NoDoublePurchase
 - **Type**: Safety Property
 - **Description**: No user can purchase the same product twice simultaneously
@@ -123,7 +123,7 @@ Example update:
 - **Scope**: for 5
 - **Verified via**: Docker CLI (automatic)
 - **Notes**: No counterexample found within scope
-```
+~~~
 
 ### Step 6: Update Verification Log
 
@@ -135,7 +135,7 @@ Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`.
 
 Append a full session entry:
 
-```markdown
+~~~markdown
 ---
 ## Verification Session: [TIMESTAMP]
 
@@ -211,19 +211,19 @@ Order$0:
 ### Actions Required
 
 - [ ] [Action items based on failures]
-```
+~~~
 
 #### Case B: Results identical to previous session
 
 Append a brief entry only:
 
-```markdown
+~~~markdown
 ---
 ## Verification Session: [TIMESTAMP]
 
 **Scope Used**: for [SCOPE_NUMBER]
 **Result**: No change from previous session ([X]/[Y] properties passed)
-```
+~~~
 
 ### Step 7: Analyze Failures and Suggest Fixes
 
@@ -254,7 +254,7 @@ For each failed property, **read the .als file** and interpret the counterexampl
 
 #### Analysis Template
 
-```markdown
+~~~markdown
 ## Analysis of Failures
 
 ### [PropertyName] Failed
@@ -295,13 +295,13 @@ fact [ConstraintName] {
 If the counterexample reveals a genuine technical design gap, update `plan.md` to clarify the design decisions.
 
 **Recommendation**: [Which option to start with and why]
-```
+~~~
 
 ### Step 8: Summary Report
 
 Provide a clear summary:
 
-```markdown
+~~~markdown
 ## Verification Complete ✓
 
 **Feature**: [FEATURE_NAME]
@@ -331,7 +331,7 @@ Provide a clear summary:
 - Apply suggested fixes to the Alloy model
 - Help interpret the counterexample details
 - Increase verification scope and re-verify
-```
+~~~
 
 ## Output Files Modified
 
