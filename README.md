@@ -59,10 +59,6 @@ cp -r /path/to/model-checking-on-sdd/commands/* .specify/templates/commands/
 # テンプレートをコピー
 cp -r /path/to/model-checking-on-sdd/templates/* .specify/templates/
 
-# ドキュメントをコピー
-mkdir -p .specify/docs
-cp /path/to/model-checking-on-sdd/GUIDE.md .specify/docs/
-
 # Docker環境をコピー
 cp -r /path/to/model-checking-on-sdd/docker ./
 cp /path/to/model-checking-on-sdd/docker-compose.yaml ./
