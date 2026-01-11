@@ -90,21 +90,7 @@ ls .specify/templates/ | grep modelcheck
 # modelcheck-verification-log-template.md
 ```
 
-#### 2.3 ドキュメントをコピー
-
-```bash
-# ドキュメントディレクトリを作成(存在しない場合)
-mkdir -p .specify/docs
-
-# GUIDE.md → .specify/docs/
-cp ${FORMAL_PKG}/GUIDE.md .specify/docs/
-
-# 確認
-ls .specify/docs/
-# 期待される出力: ... GUIDE.md ...
-```
-
-#### 2.4 Docker環境をコピー
+#### 2.3 Docker環境をコピー
 
 ```bash
 # docker/ → ./docker/alloy/ (既存のdocker/と衝突しない)
@@ -247,9 +233,6 @@ your-project/
 │   │   └── bash/
 │   │       └── verify.sh                  # ✨ 新規: 検証スクリプト
 │   │
-│   └── docs/
-│       └── GUIDE.md                       # ✨ 新規
-│
 ├── docker/
 │   └── alloy/                             # ✨ 新規: Alloy Docker環境
 │       ├── Dockerfile
@@ -258,6 +241,7 @@ your-project/
 │
 ├── docker-compose.yaml                     # ✨ 新規
 ├── .env.example                            # ✨ 新規: カスタマイズ用
+├── GUIDE.md                                # ✨ 新規: モデル検査ガイド（ユーザー向け）
 │
 ├── specs/
 │   └── {FEATURE_NAME}/
@@ -357,7 +341,7 @@ chmod +x .specify/scripts/bash/verify.sh
 1. ✅ **ドキュメントを読む**
 
    ```bash
-   cat .specify/docs/GUIDE.md
+   cat GUIDE.md
    ```
 
 2. ✅ **簡単な機能で試す**
@@ -392,9 +376,6 @@ rm .specify/templates/modelcheck-*
 
 # スクリプトを削除
 rm .specify/scripts/bash/verify.sh
-
-# ドキュメントを削除
-rm .specify/docs/GUIDE.md
 
 # Docker環境を削除
 # Note: インストール時に配置したファイルを削除してください
