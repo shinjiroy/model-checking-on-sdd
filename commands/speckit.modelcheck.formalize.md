@@ -20,7 +20,7 @@ Create **one Alloy model per logical feature**:
 
 - File location: `specs/[FEATURE_NAME]/formal/[feature].als`
 - Contains all signatures, facts, predicates, and assertions for this feature
-- If a model becomes too large (>200 lines), consider splitting into separate logical features
+- If a model becomes difficult to review, consider splitting into separate logical features
 - Complex specifications may have multiple models if they cover distinct features (not enforced, but recommended)
 
 ## Context Files (Read These First)
