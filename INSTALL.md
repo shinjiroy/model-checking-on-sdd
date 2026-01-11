@@ -177,7 +177,7 @@ docker compose build alloy-verify
 Alloy Model Checking Tool (Docker version)
 
 Usage:
-  ./verify.sh <alloy-file> [options]
+  .specify/scripts/bash/verify.sh <alloy-file> [options]
 
 Arguments:
   alloy-file       Path to .als file to verify

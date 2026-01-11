@@ -66,8 +66,9 @@ cp /path/to/model-checking-on-sdd/GUIDE.md .specify/docs/
 # Docker環境をコピー
 cp -r /path/to/model-checking-on-sdd/docker ./
 cp /path/to/model-checking-on-sdd/docker-compose.yaml ./
-cp /path/to/model-checking-on-sdd/verify.sh ./
-chmod +x verify.sh
+mkdir -p .specify/scripts/bash
+cp /path/to/model-checking-on-sdd/scripts/verify.sh .specify/scripts/bash/
+chmod +x .specify/scripts/bash/verify.sh
 
 # Dockerイメージをビルド
 mkdir -p docker/alloy
@@ -77,7 +78,7 @@ cp -r ${FORMAL_PKG}/docker/* docker/alloy/
 ### 動作確認
 
 ```bash
-./verify.sh --help
+.specify/scripts/bash/verify.sh --help
 ```
 
 ---
@@ -101,13 +102,13 @@ cp -r ${FORMAL_PKG}/docker/* docker/alloy/
 
 ```bash
 # 基本
-./verify.sh specs/001-purchase/formal/purchase.als
+.specify/scripts/bash/verify.sh specs/001-purchase/formal/purchase.als
 
 # タイムアウト指定
-./verify.sh specs/001-purchase/formal/purchase.als --timeout 300
+.specify/scripts/bash/verify.sh specs/001-purchase/formal/purchase.als --timeout 300
 
 # 再ビルド
-./verify.sh specs/001-purchase/formal/purchase.als --build
+.specify/scripts/bash/verify.sh specs/001-purchase/formal/purchase.als --build
 ```
 
 > **Note**: スコープはalsファイル内で指定します（例: `check PropertyName for 7 but 8 Int`）
