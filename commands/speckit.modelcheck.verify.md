@@ -125,11 +125,28 @@ Example update:
 - **Notes**: No counterexample found within scope
 ~~~
 
-### Step 6: Update Verification Log
+### Step 6: Update Verification Log and Analyze Failures
 
 Create or append to `specs/[FEATURE_NAME]/formal/verification-log.md`.
 
 **First, check the previous verification session** in the log file to compare results.
+
+**For each failed property**, perform analysis and include it in the log entry:
+1. Locate the assertion in `.als` file
+2. Interpret the counterexample (Skolem variable + Instance Data)
+3. Determine root cause and fix strategy
+
+**Example analysis**:
+
+If a property `NoNegativeBalance` fails with counterexample:
+- Skolem: `$NoNegativeBalance_u = User$0`
+- Instance Data: `User$0.balance = -5`
+
+The analysis would be:
+1. **Locate assertion**: `assert NoNegativeBalance { all u: User | u.balance >= 0 }`
+2. **Interpret**: Counterexample shows User$0 with balance = -5, violating the invariant
+3. **Root cause**: Purchase predicate allows balance to go negative
+4. **Fix**: Add constraint to purchase predicate: `uAfter.balance >= 0`
 
 #### Case A: Results differ from previous session (or first run)
 
@@ -180,33 +197,28 @@ Order$0:
   totalAmount: 100
 ```
 
-**Interpretation procedure** (especially when Instance Data is empty):
+**Analysis**:
 
-1. **Identify Skolem variable**: `$FailedPropertyName_o = Order$0`
-   - This indicates which instance violates the assertion
-
-2. **Find the assertion in .als file**:
+1. **Locate the assertion** in `.als` file:
    ```alloy
    assert FailedPropertyName {
      all o: Order | SomePredicate[o] implies SomeInvariant[o]
    }
    ```
+   Example: `assert NoNegativeBalance { all u: User | u.balance >= 0 }`
 
-3. **Analyze the logical meaning**:
-   - Skolem `_o = Order$0` means: there exists an Order that satisfies `SomePredicate` but violates `SomeInvariant`
-   - Check what constraints are missing in `SomePredicate`
+2. **Interpret the counterexample**:
+   - Skolem variable `$FailedPropertyName_o = Order$0` shows which instance violates
+   - If Instance Data is empty, infer from Skolem + model constraints
+   - Example: `$NoNegativeBalance_u = User$0` with `User$0.balance = -5` means User$0 violates the balance >= 0 constraint
 
-4. **Construct concrete example** (infer from model constraints):
-   | Field | Possible Value | Why |
-   |-------|----------------|-----|
-   | field1 | value1 | Based on sig constraints |
-   | field2 | value2 | Missing invariant check |
+3. **Determine root cause**:
+   [Why it fails - missing constraint, design gap, etc.]
+   Example: Purchase predicate allows balance to go negative because it doesn't check `uAfter.balance >= 0`
 
-**Analysis**:
-[Explain what scenario violates the property based on the interpretation above]
-
-**Root Cause**:
-[Identify the underlying issue - missing constraint, wrong predicate logic, etc.]
+**Fix**:
+[Specific action - e.g., "Add constraint: sum(items.discount) = totalDiscount" to predicate SomePredicate]
+Example: "Add constraint `uAfter.balance >= 0` to purchase predicate" or "Add fact: `all u: User | u.balance >= 0`"
 
 ### Actions Required
 
@@ -225,79 +237,7 @@ Append a brief entry only:
 **Result**: No change from previous session ([X]/[Y] properties passed)
 ~~~
 
-### Step 7: Analyze Failures and Suggest Fixes
-
-For each failed property, **read the .als file** and interpret the counterexample:
-
-#### Interpretation Steps
-
-1. **Parse Skolem variable naming convention**:
-   - `$PropertyName_o` → quantified variable `o` in the assertion
-   - `$PropertyName_i` → quantified variable `i` in the assertion
-   - Value (e.g., `Order$0`) → the specific instance that violates the property
-
-2. **Locate assertion in .als file**:
-   ```alloy
-   assert PropertyName {
-     all o: Order | Precondition[o] implies Invariant[o]
-   }
-   ```
-
-3. **Determine violation type**:
-   - Skolem exists → `Precondition[o]` is true BUT `Invariant[o]` is false
-   - Check what `Precondition` allows that `Invariant` forbids
-
-4. **Trace to root cause**:
-   - Missing constraint in predicate?
-   - Incorrect arithmetic (Int overflow)?
-   - Unintended state combination?
-
-#### Analysis Template
-
-~~~markdown
-## Analysis of Failures
-
-### [PropertyName] Failed
-
-**Skolem interpretation**:
-- `$PropertyName_o = Order$0` indicates an Order exists where:
-  - `[Precondition]` holds (constraints X, Y, Z satisfied)
-  - `[Invariant]` fails (constraint W violated)
-
-**Root cause**:
-[Precondition] does not enforce [specific constraint], allowing instances where [describe the violation scenario].
-
-**Concrete example** (inferred):
-- Order with items where sum(itemDiscounts) = 25
-- But Order.totalDiscount = 30 (mismatch allowed)
-
-**Suggested fixes**:
-
-**Option A: Add constraint to predicate**
-
-```alloy
-pred [PredicateName][o: Order] {
-    // existing constraints...
-    // ADD: enforce the missing invariant
-    sum(o.items.discount) = o.totalDiscount
-}
-```
-
-**Option B: Add fact to model**
-
-```alloy
-fact [ConstraintName] {
-    all o: Order | sum(o.items.discount) = o.totalDiscount
-}
-```
-
-**Option C: Refine plan.md**
-If the counterexample reveals a genuine technical design gap, update `plan.md` to clarify the design decisions.
-
-**Recommendation**: [Which option to start with and why]
-~~~
-
-### Step 8: Summary Report
+### Step 7: Summary Report
 
 Provide a clear summary:
 
