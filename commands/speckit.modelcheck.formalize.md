@@ -266,7 +266,7 @@ I've created the Alloy model for [FEATURE_NAME]:
 
 **Next steps**:
 1. Review the Alloy model for accuracy
-2. Use `/speckit.modelcheck.verify` to document results
+2. Use `/speckit.modelcheck.verify` to run verification and document results
 
 **Key properties defined**:
 - [List key assertions from the model]
