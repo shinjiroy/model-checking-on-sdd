@@ -14,13 +14,14 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
-## Single Model Principle
+## Model Organization Principle
 
-Create **exactly one** Alloy model file per specification:
+Create **one Alloy model per logical feature**:
 
 - File location: `specs/[FEATURE_NAME]/formal/[feature].als`
 - Contains all signatures, facts, predicates, and assertions for this feature
-- If a model becomes too large (>200 lines), this indicates the spec should be split
+- If a model becomes difficult to review, consider splitting into separate logical features
+- Complex specifications may have multiple models if they cover distinct features (not enforced, but recommended)
 
 ## Context Files (Read These First)
 
