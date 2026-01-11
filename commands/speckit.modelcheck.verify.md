@@ -130,7 +130,7 @@ Instance Data can appear in two forms:
 2. **Empty Instance Data** (common for `check` commands):
    ```text
    [Instance Data]
-   <empty>
+   (empty - no field values in counterexample)
    ```
    → **This is normal Alloy behavior for assertion violations**
    → Must infer the violation from:
@@ -176,7 +176,7 @@ Read the signature definitions and facts to construct a plausible scenario:
 $TotalMismatch_o = Order$0
 
 [Instance Data]
-<empty>
+(empty - no field values in counterexample)
 ```
 
 From the .als file:
