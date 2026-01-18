@@ -80,6 +80,7 @@ ls .claude/commands/
 
 ```bash
 # templates/ → .specify/templates/
+mkdir -p .specify/templates
 cp -r ${FORMAL_PKG}/templates/* .specify/templates/
 
 # 確認
@@ -95,7 +96,7 @@ ls .specify/templates/ | grep modelcheck
 ```bash
 # docker/ → ./docker/alloy/ (既存のdocker/と衝突しない)
 mkdir -p docker/alloy
-cp -r ${FORMAL_PKG}/docker/* docker/alloy/
+find ${FORMAL_PKG}/docker/ -maxdepth 1 -type f -exec cp {} docker/alloy/ \;
 
 # docker-compose.yaml → ./
 # 注意: 既存のdocker-compose.yamlがある場合はマージが必要
