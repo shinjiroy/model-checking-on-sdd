@@ -400,8 +400,8 @@ A: はい。Docker内でJavaとAlloyが動作するため、ホストにJavaは�
 **Q: Docker Desktopがないと使えませんか?**  
 A: macOSの場合はDocker Desktop推奨。Linux/WSLならDocker Engineでも可能。
 
-**Q: M1/M2 Macで動作しますか?**  
-A: はい。Alpine LinuxベースのイメージはARM64に対応しています。
+**Q: M1/M2/M4 Macで動作しますか?**  
+A: Debianベースのイメージを使用し、対応しています。
 
 **Q: オフライン環境で使えますか?**  
 A: Dockerイメージをビルド済みであれば可能。ビルド時のみインターネット接続が必要。
