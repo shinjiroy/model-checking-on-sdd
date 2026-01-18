@@ -48,38 +48,28 @@ NC='\033[0m' # No Color
 
 # Show help
 show_help() {
-    cat << EOF
-${GREEN}Alloy Model Checking Tool (Docker version)${NC}
-
-Usage:
-  ./verify.sh <alloy-file> [options]
-
-Arguments:
-  alloy-file       Path to .als file to verify
-                   (e.g., specs/001-purchase/formal/purchase.als)
-
-Options:
-  --timeout N      Timeout in seconds (default: 300)
-  --format FORMAT  Output format: text, xml (default: text)
-  --build          Rebuild Docker image
-  --shell          Start Alloy environment shell
-  --help           Show this help
-
-Note: Scope is specified in the .als file (e.g., "check PropertyName for 5 but 8 Int")
-
-Examples:
-  # Basic verification
-  ./verify.sh specs/001-purchase/formal/purchase.als
-
-  # Specify timeout
-  ./verify.sh specs/001-purchase/formal/purchase.als --timeout 600
-
-  # Rebuild image and verify
-  ./verify.sh specs/001-purchase/formal/purchase.als --build
-
-  # Start debug shell
-  ./verify.sh --shell
-EOF
+    printf "${GREEN}Alloy Model Checking Tool (Docker version)${NC}\n\n"
+    printf "Usage:\n"
+    printf "  ./verify.sh <alloy-file> [options]\n\n"
+    printf "Arguments:\n"
+    printf "  alloy-file       Path to .als file to verify\n"
+    printf "                   (e.g., specs/001-purchase/formal/purchase.als)\n\n"
+    printf "Options:\n"
+    printf "  --timeout N      Timeout in seconds (default: 300)\n"
+    printf "  --format FORMAT  Output format: text, xml (default: text)\n"
+    printf "  --build          Rebuild Docker image\n"
+    printf "  --shell          Start Alloy environment shell\n"
+    printf "  --help           Show this help\n\n"
+    printf "Note: Scope is specified in the .als file (e.g., \"check PropertyName for 5 but 8 Int\")\n\n"
+    printf "Examples:\n"
+    printf "  # Basic verification\n"
+    printf "  ./verify.sh specs/001-purchase/formal/purchase.als\n\n"
+    printf "  # Specify timeout\n"
+    printf "  ./verify.sh specs/001-purchase/formal/purchase.als --timeout 600\n\n"
+    printf "  # Rebuild image and verify\n"
+    printf "  ./verify.sh specs/001-purchase/formal/purchase.als --build\n\n"
+    printf "  # Start debug shell\n"
+    printf "  ./verify.sh --shell\n"
 }
 
 # Build Docker image

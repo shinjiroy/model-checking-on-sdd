@@ -1,6 +1,8 @@
 # Alloy AnalyzerのDockerfile
+# Note: Using eclipse-temurin:17-jdk (not alpine) for ARM64 support
+# Alpine variant (17-jdk-alpine) does not support ARM64 architecture
 
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 
 # Alloy Analyzerのバージョン
 ARG ALLOY_VERSION=6.2.0
@@ -9,9 +11,12 @@ ARG ALLOY_VERSION=6.2.0
 WORKDIR /alloy
 
 # Alloy Analyzerをダウンロード & jqをインストール
-RUN apk add --no-cache wget jq && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget jq && \
     wget -O alloy.jar "https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v${ALLOY_VERSION}/org.alloytools.alloy.dist.jar" && \
-    apk del wget
+    apt-get purge -y wget && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # 検証スクリプトをコピー
 COPY verify-alloy.sh /usr/local/bin/verify-alloy
